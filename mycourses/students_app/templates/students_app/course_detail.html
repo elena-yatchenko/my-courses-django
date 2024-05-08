@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Курс: {{ course.name }}</h1>
+
+<p><strong>Категория:</strong> {{ course.category }}</p>
+<p><strong>Описание:</strong> {{ course.summary }}</p>
+<p><strong>Продолжительность:</strong> {{ course.lasting }} мес.</p>
+<p><strong>Стоимость обучения:</strong> {{ course.total_cost }} азн</p>
+<p><strong>Рейтинг:</strong> {% if course.rating is not None %}{{ course.rating }}{% else %}Нет отзывов{% endif %}</p>
+<hr>
+<p class="text-muted">Количество просмотров: {{ course.views_num }}</p>
+
+{% if user.is_staff %}
+<div style="margin-left:20px;margin-top:20px">
+    <h4>Студенты</h4>
+
+    {% for student in students %}
+    <hr>
+    <p class="{% if student.is_paid %}text-success{% else %}text-danger{% endif %}"><a
+            href="{{ student.get_absolute_url }}">
+            {{ student.get_name_display }}, {{ student.get_surname_display }}</a></p>
+    <p><strong>Дата регистрации:</strong> {{student.reg_date}}</p>
+    <p><strong>Телефон:</strong> {{student.phone}}</p>
+    <p><strong>Дата регистрации:</strong> {{student.date_of_birth}}</p>
+    <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
+
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

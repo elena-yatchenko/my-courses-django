@@ -14,10 +14,12 @@ class Category(models.Model):
         max_length=100,
         help_text="Категория курса (e.g. 1C - ИТ, 1C - Консалтинг)",
     )
+    flag = models.CharField(max_length=10, default="cons")
 
     class Meta:
         # ordering = ["name"]
-        verbose_name = "Категория"
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.name
@@ -30,21 +32,24 @@ class Course(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     summary = models.TextField(max_length=1000, help_text="Краткое описание курса")
     lasting = models.IntegerField(
-        default=30, help_text="Продолжительность курса, в днях"
+        default=1, help_text="Продолжительность курса, в месяцах"
     )
     is_selected = models.BooleanField(default=False)
-    cost = models.DecimalField(max_digits=8, decimal_places=2)
+    cost = models.DecimalField(
+        max_digits=8, decimal_places=2, help_text="Стоимость курса, в азн"
+    )
     added = models.DateField(auto_now_add=True)
-    rating = models.DecimalField(default=5.0, max_digits=3, decimal_places=2)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
     deleted = models.DateField(auto_now=True)
+    views_num = models.IntegerField(default=0)
 
     def total_cost(self):
-        return (self.lasting / 30) * self.cost
+        return self.lasting * self.cost
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Курс"
+        # verbose_name = "Курс"
 
     def get_absolute_url(self):
         """Returns the url to access a particular course instance."""
@@ -64,7 +69,7 @@ class Mark(models.Model):
         ("4", "4 - хорошо"),
         ("5", "5 - отлично"),
     )
-    mark_value = models.CharField(choices=MARKS)
+    mark_value = models.CharField(max_length=20, choices=MARKS)
 
 
 class Student(models.Model):
@@ -86,22 +91,26 @@ class Student(models.Model):
     ]
 
     status = models.CharField(
+        max_length=50,
         choices=STUDENT_STATUS,
         default="r",
         help_text="Статус студента",
     )
     request_date = models.DateField(auto_now_add=True)
-    registered = models.DateField(blank=True, null=True)
+    reg_date = models.DateField(blank=True, null=True)
 
     @property
     def is_finished(self):
-        if self.registered and date.today() > self.registered + timedelta(
+        if self.reg_date and date.today() > self.reg_date + timedelta(
             self.course.lasting
         ):
             return True
         return False
 
     marks = models.ManyToManyField(Mark)
+    is_paid = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
+    deleted = models.DateField(auto_now=True)
 
     def average_mark(self):
         """Creates an average for the marks. This is required to display marks in Admin."""
@@ -110,7 +119,7 @@ class Student(models.Model):
 
     class Meta:
         ordering = ["name"]
-        verbose_name = "Студент"
+        # verbose_name = "Студент"
 
     def get_absolute_url(self):
         """Returns the url to access a particular student instance."""
@@ -118,3 +127,48 @@ class Student(models.Model):
 
     def __str__(self):
         return f"{self.name}, {self.surname}"
+
+
+class Payment(models.Model):
+    """Model representing a payment for course"""
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    amount = models.DecimalField(verbose_name="Сумма", max_digits=8, decimal_places=2)
+    paid_date = models.DateField(verbose_name="Дата оплаты", auto_now_add=True)
+
+    class Meta:
+        ordering = ["-paid_date"]
+        # verbose_name = "Оплата"
+
+    def __str__(self):
+        return self.amount
+
+
+class Review(models.Model):
+    """Model representing a comment about course"""
+
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    text = models.TextField(
+        max_length=2000,
+        help_text="Отзыв к курсу",
+    )
+    RATES = (
+        (1, "1"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+    )
+    rate = models.IntegerField(choices=RATES)
+
+    class Meta:
+        ordering = ["-rate"]
+        # verbose_name = "Отзыв"
+
+    def get_summary(self):
+        words = self.text.split()
+        return f'{" ".join(words[:12])}...'
+
+    def __str__(self):
+        return self.rate
