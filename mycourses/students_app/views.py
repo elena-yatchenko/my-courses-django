@@ -84,8 +84,8 @@ def logout_view(request):
 
 
 @login_required
-def profile(request, id):
-    student = Student.objects.filter(pk=id, is_deleted=False).first()
+def profile(request):
+    student = Student.objects.filter(related_user=request.user).first()
     return render(
         request,
         "students_app/profile.html",
