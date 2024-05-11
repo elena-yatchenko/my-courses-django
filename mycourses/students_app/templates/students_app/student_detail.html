@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Студент: {{ student.name }}, {{ student.surname }}</h1>
+
+<p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}} г.</p>
+<p><strong>Телефон:</strong> {{student.phone}}</p>
+<p><strong>E-mail:</strong> {{student.related_user.email}}</p>
+<p><strong>Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}} г.</p>
+<p><strong>Средний балл:</strong> {{student.average_mark}}</p>
+<p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
+    Статус оплаты: {% if student.is_paid %}Оплачено
+    {% elif not payments %}Оплаты нет
+    {% else %}Оплачено частично{% endif %}</p>
+<hr>
+<div style="margin-left:20px;margin-top:20px">
+    <h4><strong>Данные оплаты</strong></h4>
+    <br>
+    <p class="text-success"><strong>Общая стоимость обучения: {{ student.course.total_cost}} азн<strong></strong>
+    </p><br>
+    {% if payments %}
+    {% for payment in payments %}
+    <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
+    <p><strong>Сумма: </strong>{{ payment.amount }} азн</p>
+    <br>
+
+
+    {% endfor %}
+    {% else %}<p>Нет зарегистрированных платежей</p>
+    {% endif %}
+</div>
+{% endblock %}

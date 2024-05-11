@@ -36,7 +36,7 @@ class Course(models.Model):
     )
     is_selected = models.BooleanField(default=False)
     cost = models.DecimalField(
-        max_digits=8, decimal_places=2, help_text="Стоимость курса, в азн"
+        max_digits=8, decimal_places=2, help_text="Стоимость в месяц, азн"
     )
     added = models.DateField(auto_now_add=True)
     rating = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
@@ -47,8 +47,14 @@ class Course(models.Model):
     def total_cost(self):
         return self.lasting * self.cost
 
+    # проверить работу функции
+    def rating_count(self):
+        rates = [review.rate for review in self.review_set.all()]
+        rating = round(sum(rates) / len(rates), 2)
+        return rating
+
     class Meta:
-        ordering = ["name"]
+        ordering = ["-name"]
         # verbose_name = "Курс"
 
     def get_absolute_url(self):
@@ -63,13 +69,13 @@ class Mark(models.Model):
     """Model representing a mark"""
 
     MARKS = (
-        ("1", "1 - очень плохо"),
-        ("2", "2 - плохо"),
-        ("3", "3 - удовлетворительно"),
-        ("4", "4 - хорошо"),
-        ("5", "5 - отлично"),
+        (1, "1 - очень плохо"),
+        (2, "2 - плохо"),
+        (3, "3 - удовлетворительно"),
+        (4, "4 - хорошо"),
+        (5, "5 - отлично"),
     )
-    mark_value = models.CharField(max_length=20, choices=MARKS)
+    mark_value = models.IntegerField(choices=MARKS)
 
 
 class Student(models.Model):
@@ -83,6 +89,10 @@ class Student(models.Model):
     date_of_birth = models.DateField()
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
     photo = models.ImageField(upload_to="photoes/", null=True, blank=True)
+
+    @property
+    def full_name(self):
+        return f"{self.surname} {self.name}"
 
     STUDENT_STATUS = [
         ("r", "requested"),
@@ -101,13 +111,12 @@ class Student(models.Model):
 
     @property
     def is_finished(self):
-        if self.reg_date and date.today() > self.reg_date + timedelta(
-            self.course.lasting
-        ):
+        days = self.course.lasting * 30
+        if self.reg_date and date.today() > self.reg_date + timedelta(days=days):
             return True
         return False
 
-    marks = models.ManyToManyField(Mark)
+    marks = models.ManyToManyField(Mark, blank=True)
     is_paid = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     deleted = models.DateField(auto_now=True)
@@ -115,7 +124,10 @@ class Student(models.Model):
     def average_mark(self):
         """Creates an average for the marks. This is required to display marks in Admin."""
         mark_list = [int(mark.mark_value) for mark in self.marks.all()]
-        return sum(mark_list) / len(mark_list)
+        if mark_list:
+            return sum(mark_list) / len(mark_list)
+        else:
+            return "Оценок нет"
 
     class Meta:
         ordering = ["name"]
@@ -141,7 +153,7 @@ class Payment(models.Model):
         # verbose_name = "Оплата"
 
     def __str__(self):
-        return self.amount
+        return f"{self.amount}"
 
 
 class Review(models.Model):
@@ -171,4 +183,4 @@ class Review(models.Model):
         return f'{" ".join(words[:12])}...'
 
     def __str__(self):
-        return self.rate
+        return f"{self.rate}"

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{% if status == 'r' %}Заявки на обучение{% elif status == 'a' %}Список студентов
+    {% elif status == 'f' %}Архив студентов{% endif %}</h1>
+<hr>
+
+{% if student_list %}
+{% for course in page_obj %}
+
+<ul>
+    <li>
+        <p class="course-name"><strong>{{ course.name }} ({{course.category}})</strong></p>
+    </li>
+    <ol>
+        {% for student in student_list %}
+        {% if student.course == course %}
+        <li>
+            <a href="{{ student.get_absolute_url }}">{{ student.full_name }}</a>
+            {% if status == 'r' %}
+            <p><strong>Дата подачи заявки:</strong> {{student.request_date|date:"d.m.Y"}}
+                <button type="button"><a href="/">Принять заявку</a></button>
+            </p>{% endif %}
+            {% if status == 'a' %}
+            <p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}}</p>{% endif %}
+            {% if student.is_finished %}
+            <p class="{% if student.is_finished %}text-danger{% endif %}">Срок обучения завершился
+                <button type="button"><a href="/">Добавить в архив</a></button>
+            </p>{% endif %}
+        </li>
+        {% endif %}
+        {% endfor %}
+    </ol>
+</ul>
+
+{% endfor %}
+{% else %}
+<p>{% if status == 'r' %}К сожалению, новых заявок на обучение нет
+    {% elif status == 'a' %}Студентов нет
+    {% elif status == 'f' %}Архив студентов пуст{% endif %}</p>
+{% endif %}
+{% endblock %}
+{% block pagination %}
+<div class="pagination">
+    <span class="page-links">
+        {% if page_obj.has_previous %}
+        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+        <span class="page-current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+        {% if page_obj.has_next %}
+        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}
