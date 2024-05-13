@@ -23,10 +23,14 @@ from django.conf.urls.static import static
 from students_app import views
 
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("main/", include("students_app.urls")),
-    path("", RedirectView.as_view(url="/main/", permanent=True)),
-    path("accounts/logout/", views.logout_view, name="logout"),
-    path("accounts/", include("django.contrib.auth.urls")),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+urlpatterns = (
+    [
+        path("admin/", admin.site.urls),
+        path("main/", include("students_app.urls")),
+        path("", RedirectView.as_view(url="/main/", permanent=True)),
+        path("accounts/logout/", views.logout_view, name="logout"),
+        path("accounts/", include("django.contrib.auth.urls")),
+    ]
+    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+)

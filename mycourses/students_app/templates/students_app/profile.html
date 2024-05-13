@@ -3,10 +3,15 @@
 {% block content %}
 <h1>Личный кабинет: {{ student.full_name }}</h1>
 
-<p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}} г.</p>
 <p><strong>Телефон:</strong> {{student.phone}}</p>
 <p><strong>E-mail:</strong> {{student.related_user.email}}</p>
 <p><strong>Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}} г.</p>
+{% if student.status == 'r' %}
+<br>
+<h4><strong>Ваша заявка находится на рассмотрении</strong></h4>
+<p><strong>Дата подачи заявки:</strong> {{student.request_date|date:"d.m.Y"}} г.</p>
+{% else %}
+<p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}} г.</p>
 <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
 <p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
     Статус оплаты: {% if student.is_paid %}Оплачено
@@ -29,4 +34,5 @@
     {% else %}<p>Нет зарегистрированных платежей</p>
     {% endif %}
 </div>
+{% endif %}
 {% endblock %}

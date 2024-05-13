@@ -7,12 +7,11 @@
 <p><strong>Описание:</strong> {{ course.summary }}</p>
 <p><strong>Продолжительность:</strong> {{ course.lasting }} мес.</p>
 <p><strong>Стоимость обучения:</strong> {{ course.total_cost }} азн</p>
-<!-- <p><strong>Рейтинг:</strong> {{ course.rating_count }}</p> -->
 <p><strong>Рейтинг:</strong> {% if course.rating is not None %}{{ course.rating_count }}{% else %}Нет отзывов{% endif %}
 </p>
 <hr>
 <p class="text-muted">Количество просмотров: {{ course.views_num }}</p>
-<button type="button"><a href="/">Подать заявку</a></button>
+<button type="button"><a href="{% url 'student-request' course.id%}">Подать заявку</a></button>
 
 <!-- для авторизованных -->
 <h4><strong>Комментарии</strong></h4>

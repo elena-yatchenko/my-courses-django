@@ -10,6 +10,12 @@ urlpatterns = [
     # # re_path(r"^book/(?P<pk>\d+)$", views.BookDetailView.as_view(), name="book-detail"),
     path("student/<int:id>", views.student_detail, name="student-detail"),
     path("profile/", views.profile, name="profile"),
+    path("register/", views.register, name="register"),
+    path(
+        "student/register/<int:course_id>",
+        views.student_request,
+        name="student-request",
+    ),
     # # re_path(r'^mybooks/$', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
     # path("mybooks/", views.LoanedBooksByUserListView.as_view(), name="my-borrowed"),
     # path("borrowedbooks/", views.all_burrowed, name="all-borrowed"),

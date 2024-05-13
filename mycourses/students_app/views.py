@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Category, Course, Mark, Student, Payment, Review
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.http import HttpResponse
@@ -90,4 +90,79 @@ def profile(request):
         request,
         "students_app/profile.html",
         context={"student": student},
+    )
+
+
+""" Представления для работы с формами обработки данных"""
+
+from django.contrib.auth import get_user_model
+from .forms import RegisterUserForm, RegisterStudentForm
+
+
+def register(request):
+    if request.method == "POST":
+        user_form = RegisterUserForm(request.POST)
+        if user_form.is_valid():
+            # Создаем пользователя, но не сохраняем
+            new_user = user_form.save(commit=False)
+            # Устанавливаем пароль (с шифрованием)
+            new_user.set_password(user_form.cleaned_data["password"])
+            # сохраняем пользователя в БД
+            new_user.save()
+            # login(request, new_user)
+            return render(
+                request,
+                "students_app/register_done.html",
+                {"user_form": user_form},
+            )
+        else:
+            # !!!! добавить ЛОГИРОВАНИЕ
+            message = "Некорректные данные"
+    else:
+        user_form = RegisterUserForm()
+        message = "Заполните поля формы"
+    return render(
+        request,
+        "students_app/register.html",
+        {"user_form": user_form, "message": message},
+    )
+
+
+@login_required
+def student_request(request, course_id):
+    current_user = request.user
+    if request.method == "POST":
+        course = Course.objects.filter(pk=course_id).first()
+        form = RegisterStudentForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            student = Student(
+                name=cd["name"],
+                surname=cd["surname"],
+                phone=cd["phone"],
+                date_of_birth=cd["date_of_birth"],
+                course=course,
+                status="r",
+                related_user=current_user,
+            )
+            student.save()
+            current_user.last_name = cd["surname"]
+            current_user.save()
+            return redirect("profile")
+        else:
+            # !!!! добавить ЛОГИРОВАНИЕ
+            message = "Некорректные данные"
+    else:
+        # if course_id is None:
+        form = RegisterStudentForm(initial={"name": current_user.first_name})
+        # else:
+        #     form = RegisterStudentForm(
+        #         initial={"course": Course.objects.filter(pk=course_id).first()}
+        #     )
+        message = "Заполните поля формы"
+
+    return render(
+        request,
+        "students_app/student_form.html",
+        {"form": form, "message": message},
     )

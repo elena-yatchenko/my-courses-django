@@ -88,7 +88,7 @@ class Student(models.Model):
     phone = models.CharField(verbose_name="Номер телефона", max_length=50)
     date_of_birth = models.DateField()
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
-    photo = models.ImageField(upload_to="photoes/", null=True, blank=True)
+    # photo = models.ImageField(upload_to="photoes/", null=True, blank=True)
 
     @property
     def full_name(self):
@@ -147,6 +147,7 @@ class Payment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     amount = models.DecimalField(verbose_name="Сумма", max_digits=8, decimal_places=2)
     paid_date = models.DateField(verbose_name="Дата оплаты", auto_now_add=True)
+    document = models.FileField(upload_to="images/files", null=True, blank=True)
 
     class Meta:
         ordering = ["-paid_date"]
@@ -184,3 +185,12 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.rate}"
+
+
+class Image(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to="images")
+
+    def __str__(self):
+        return self.title
