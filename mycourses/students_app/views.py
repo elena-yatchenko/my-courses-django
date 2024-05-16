@@ -1,3 +1,7 @@
+from django.core.files.storage import FileSystemStorage
+from .forms import PaymentForm
+from .forms import RegisterUserForm, RegisterStudentForm
+from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .models import Category, Course, Mark, Student, Payment, Review
 from django.contrib.auth import logout, login
@@ -50,7 +54,8 @@ def students(request, status):
     return render(
         request,
         "students_app/students_list.html",
-        context={"status": status, "page_obj": page_obj, "student_list": student_list},
+        context={"status": status, "page_obj": page_obj,
+                 "student_list": student_list},
     )
 
 
@@ -94,9 +99,6 @@ def profile(request):
 
 
 """ Представления для работы с формами обработки данных"""
-
-from django.contrib.auth import get_user_model
-from .forms import RegisterUserForm, RegisterStudentForm
 
 
 def register(request):
@@ -153,12 +155,7 @@ def student_request(request, course_id):
             # !!!! добавить ЛОГИРОВАНИЕ
             message = "Некорректные данные"
     else:
-        # if course_id is None:
         form = RegisterStudentForm(initial={"name": current_user.first_name})
-        # else:
-        #     form = RegisterStudentForm(
-        #         initial={"course": Course.objects.filter(pk=course_id).first()}
-        #     )
         message = "Заполните поля формы"
 
     return render(
@@ -166,3 +163,42 @@ def student_request(request, course_id):
         "students_app/student_form.html",
         {"form": form, "message": message},
     )
+
+
+def student_payment(request, stud_id=None):
+    if request.method == "POST":
+        payment_form = PaymentForm(request.POST, request.FILES)
+        if payment_form.is_valid():
+            amount = payment_form.cleaned_data['amount']
+            student = payment_form.cleaned_data['student']
+            paid_date = payment_form.cleaned_data['paid_date']
+            document = payment_form.cleaned_data['document']
+            if document:
+                fs = FileSystemStorage()
+                fs.save(document.name, document)
+            payment = Payment(amount=amount, student=student,
+                              paid_date=paid_date, document=document)
+            payment.save()
+            # проверка и автообновление атрибута is_paid студента
+            if student.rest_of_payment() == 0:
+                student.is_paid = True
+                student.save()
+            return redirect('student-detail', student.pk)
+        else:
+            # !!!! добавить ЛОГИРОВАНИЕ
+            message = "Некорректные данные"
+    else:
+        if stud_id is not None:
+            initial_student = Student.objects.filter(pk=stud_id).first()
+            payment_form = PaymentForm(initial={"student": initial_student})
+        else:
+            payment_form = PaymentForm()
+        message = "Заполните поля формы"
+
+    return render(
+        request,
+        "students_app/payment_form.html",
+        {"form": payment_form, "message": message},
+    )
+
+    pass

@@ -51,6 +51,9 @@
                     <li><a href="{% url 'students' status='a' %}">Студенты</a></li>
                     <li><a href="{% url 'students' status='f' %}">Архив</a></li>
                 </ul>
+                <ul class="sidebar-nav">
+                    <li><a href="{% url 'student-payment' %}">Оплата</a></li>
+                </ul>
                 {% endif %}
 
                 {% endblock %}

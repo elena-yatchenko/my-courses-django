@@ -12,15 +12,19 @@
     Статус оплаты: {% if student.is_paid %}Оплачено
     {% elif not payments %}Оплаты нет
     {% else %}Оплачено частично{% endif %}</p>
+<p><a href="{% url 'student-payment' student.id  %}">Добавить данные по оплате</a></p>
 <hr>
 <div style="margin-left:20px;margin-top:20px">
     <h4><strong>Данные оплаты</strong></h4>
     <br>
-    <p class="text-success"><strong>Общая стоимость обучения: {{ student.course.total_cost}} азн<strong></strong>
+    <p class="text-success"><strong>Общая стоимость обучения: {{ student.course.total_cost}} азн</strong>
+    </p>
+    <p class="text-warning"><strong>Остаток для оплаты: {{ student.rest_of_payment}} азн</strong>
     </p><br>
     {% if payments %}
     {% for payment in payments %}
-    <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
+    <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.
+        Документ оплаты: <a href="{{ payment.document }}">{{ payment.document.name }}</a></p>
     <p><strong>Сумма: </strong>{{ payment.amount }} азн</p>
     <br>
 
