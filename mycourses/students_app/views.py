@@ -8,7 +8,7 @@ from django.contrib.auth import logout, login
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 
 # Create your views here.
 
@@ -54,8 +54,7 @@ def students(request, status):
     return render(
         request,
         "students_app/students_list.html",
-        context={"status": status, "page_obj": page_obj,
-                 "student_list": student_list},
+        context={"status": status, "page_obj": page_obj, "student_list": student_list},
     )
 
 
@@ -165,32 +164,41 @@ def student_request(request, course_id):
     )
 
 
+@permission_required("students_app.add_payment")
+@permission_required("students_app.change_payment")
 def student_payment(request, stud_id=None):
     if request.method == "POST":
         payment_form = PaymentForm(request.POST, request.FILES)
         if payment_form.is_valid():
-            amount = payment_form.cleaned_data['amount']
-            student = payment_form.cleaned_data['student']
-            paid_date = payment_form.cleaned_data['paid_date']
-            document = payment_form.cleaned_data['document']
+            amount = payment_form.cleaned_data["amount"]
+            student = payment_form.cleaned_data["student"]
+            paid_date = payment_form.cleaned_data["paid_date"]
+            document = payment_form.cleaned_data["document"]
             if document:
                 fs = FileSystemStorage()
                 fs.save(document.name, document)
-            payment = Payment(amount=amount, student=student,
-                              paid_date=paid_date, document=document)
+            payment = Payment(
+                amount=amount, student=student, paid_date=paid_date, document=document
+            )
             payment.save()
             # проверка и автообновление атрибута is_paid студента
             if student.rest_of_payment() == 0:
                 student.is_paid = True
                 student.save()
-            return redirect('student-detail', student.pk)
+            return redirect("student-detail", student.pk)
         else:
             # !!!! добавить ЛОГИРОВАНИЕ
             message = "Некорректные данные"
     else:
+
         if stud_id is not None:
             initial_student = Student.objects.filter(pk=stud_id).first()
-            payment_form = PaymentForm(initial={"student": initial_student})
+            payment_form = PaymentForm(
+                initial={
+                    "student": initial_student,
+                    "amount": initial_student.rest_of_payment(),
+                }
+            )
         else:
             payment_form = PaymentForm()
         message = "Заполните поля формы"
