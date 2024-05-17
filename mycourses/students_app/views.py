@@ -1,5 +1,5 @@
 from django.core.files.storage import FileSystemStorage
-from .forms import PaymentForm
+from .forms import PaymentForm, ConfirmationForm
 from .forms import RegisterUserForm, RegisterStudentForm
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
@@ -9,6 +9,8 @@ from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.models import Group
+from datetime import date
 
 # Create your views here.
 
@@ -54,7 +56,8 @@ def students(request, status):
     return render(
         request,
         "students_app/students_list.html",
-        context={"status": status, "page_obj": page_obj, "student_list": student_list},
+        context={"status": status, "page_obj": page_obj,
+                 "student_list": student_list},
     )
 
 
@@ -209,4 +212,34 @@ def student_payment(request, stud_id=None):
         {"form": payment_form, "message": message},
     )
 
-    pass
+
+def student_approve(request, stud_id):
+    # back_url = request.path
+    back_url = request.GET["next"]
+    student = Student.objects.filter(pk=stud_id, is_deleted=False).first()
+    if request.method == "POST":
+        confirm_form = ConfirmationForm(request.POST)
+        if confirm_form.is_valid():
+            confirm_choice = confirm_form.cleaned_data["confirm_choice"]
+            print(confirm_choice)
+            if confirm_choice == 'False':
+                return redirect(back_url)
+            else:
+                user = student.related_user
+                group = Group.objects.get(name='Students')
+                user.groups.add(group)
+                student.status = 'a'
+                student.reg_date = date.today()
+                student.save()
+                return redirect("student-detail", stud_id)
+                
+        else:
+            message = "Некорректные данные"
+    else:
+        confirm_form = ConfirmationForm()
+        message = "Подтвердите Ваш выбор"
+    return render(
+        request,
+        "students_app/confirmation.html",
+        {"form": confirm_form, "message": message, 'student': student},
+    )

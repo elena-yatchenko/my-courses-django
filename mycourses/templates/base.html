@@ -39,9 +39,9 @@
                     {% if user.is_authenticated %}
                     <li>User: {{ user.get_username }}</li>
                     <!-- <li><button type="button"><a href="/">Личный кабинет</a></button></li> -->
-                    <li><a href="{% url 'logout'%}">Logout</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
                     {% else %}
-                    <li><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+                    <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
                     {% endif %}
                 </ul>
                 {% if user.is_staff %}

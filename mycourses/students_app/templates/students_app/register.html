@@ -12,7 +12,10 @@
         {% csrf_token %}
         {{ user_form.as_p }}
 
-        <p><input type="submit" value="Создать аккаунт"></p>
+        <!-- <p><input type="submit" value="Создать аккаунт"></p> -->
+        <p><button type="submit"><strong>Создать аккаунт</strong></button>
+            <button type="reset"><strong>Очистить данные</strong></button>
+        </p>
     </form>
 </div>
 {% endblock %}

@@ -58,7 +58,7 @@ class PaymentForm(forms.Form):
     """Форма используется для регистрации оплаты"""
 
     student = forms.ModelChoiceField(label='Студент', queryset=Student.objects.all(),
-                                     widget=forms.Select(attrs={"class": "form-control"}))
+                                     widget=forms.Select(attrs={"class": "form-check-input"}))
     amount = forms.DecimalField(label="Сумма оплаты", max_digits=8, decimal_places=2,
                                 widget=forms.NumberInput(attrs={"class": "form-control"}),)
     paid_date = forms.DateField(label="Дата оплаты", initial=date.today(),
@@ -81,3 +81,9 @@ class PaymentForm(forms.Form):
             raise forms.ValidationError(
                 "Дата оплаты не может быть больше текущей даты")
         return paid_date
+
+
+class ConfirmationForm(forms.Form):
+    YES_NO_CHOICES = [(True, 'Принять'), (False, 'Отклонить')]
+    confirm_choice = forms.ChoiceField(label='', widget=forms.RadioSelect(
+        attrs={"class": "form-check-input"}), choices=YES_NO_CHOICES, required=True)

@@ -19,6 +19,7 @@ urlpatterns = [
     path("student/<int:stud_id>/payment",
          views.student_payment, name="student-payment"),
     path("student/payment", views.student_payment, name="student-payment"),
+    path("student/approve/<int:stud_id>", views.student_approve, name="student-approve"),
     # # re_path(r'^mybooks/$', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
     # path("mybooks/", views.LoanedBooksByUserListView.as_view(), name="my-borrowed"),
     # path("borrowedbooks/", views.all_burrowed, name="all-borrowed"),

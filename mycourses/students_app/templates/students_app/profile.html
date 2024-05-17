@@ -11,8 +11,11 @@
 <h4><strong>Ваша заявка находится на рассмотрении</strong></h4>
 <p><strong>Дата подачи заявки:</strong> {{student.request_date|date:"d.m.Y"}} г.</p>
 {% else %}
-<p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}} г.</p>
-<p><strong>Средний балл:</strong> {{student.average_mark}}</p>
+<div style="margin-top:20px; margin-bottom:20px;">
+    <p><strong>Курс:</strong> {{student.course }}</p>
+    <p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}} г.</p>
+    <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
+</div>
 <p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
     Статус оплаты: {% if student.is_paid %}Оплачено
     {% elif not payments %}Оплаты нет

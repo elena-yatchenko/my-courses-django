@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Подтверждение заявки на обучение{% endblock %}
+
+{% block content %}
+<h2>Подтверждение заявки на обучение студента <strong>{{ student.full_name }}</strong></h2><br>
+<h4 class="">{{ message }}</h4>
+
+<div class="shadowbox">
+    <form action="" method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p><button type="submit"><strong>ОК</strong></button></p>
+        <!-- <p><input type="submit" value="Подтвердить"></p> -->
+    </form>
+</div>
+{% endblock %}

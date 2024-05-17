@@ -19,7 +19,8 @@
             <a href="{{ student.get_absolute_url }}">{{ student.full_name }}</a>
             {% if status == 'r' %}
             <p><strong>Дата подачи заявки:</strong> {{student.request_date|date:"d.m.Y"}}
-                <button type="button"><a href="/">Принять заявку</a></button>
+                <button type="button"><a href="{% url 'student-approve' student.pk %}?next={{request.path}}">Обработать
+                        заявку</a></button>
             </p>{% endif %}
             {% if status == 'a' %}
             <p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}}</p>{% endif %}
