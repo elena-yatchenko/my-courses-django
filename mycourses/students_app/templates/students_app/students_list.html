@@ -24,9 +24,10 @@
             </p>{% endif %}
             {% if status == 'a' %}
             <p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}}</p>{% endif %}
-            {% if student.is_finished %}
+            {% if student.is_finished and student.status != 'f' %}
             <p class="{% if student.is_finished %}text-danger{% endif %}">Срок обучения завершился
-                <button type="button"><a href="/">Добавить в архив</a></button>
+                <button type="button"><a href="{% url 'student-archive' student.pk %}?next={{request.path}}">
+                        Добавить в архив</a></button>
             </p>{% endif %}
         </li>
         {% endif %}

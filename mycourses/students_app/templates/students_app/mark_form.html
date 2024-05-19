@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}ОЦЕНКИ{% endblock %}
+
+
+{% block content %}
+<h4><strong>Курс: {{ course.name }}</strong></h4>
+<h3>Сегодня: {{ current_date|date:"d.m.Y" }}</h3>
+
+<h4 class="{% if form.errors %}text-danger{% else %}text-success{% endif %}">{{ message }}</h4>
+
+<div class="shadowbox">
+    <form action="" method="post">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p><button type="submit"><strong>Подтвердить</strong></button></p>
+    </form>
+</div>
+<hr>
+<p>Чтобы завершить работу с формой, нажмите кнопку
+    <button type="button"><a href="{{ back_url }}">Завершить</a></button>
+</p>
+{% endblock %}

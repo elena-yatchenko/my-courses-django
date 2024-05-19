@@ -7,30 +7,56 @@
 <p><strong>Описание:</strong> {{ course.summary }}</p>
 <p><strong>Продолжительность:</strong> {{ course.lasting }} мес.</p>
 <p><strong>Стоимость обучения:</strong> {{ course.total_cost }} азн</p>
-<p><strong>Рейтинг:</strong> {% if course.rating is not None %}{{ course.rating_count }}{% else %}Нет отзывов{% endif %}
+<p><strong>Рейтинг:</strong> {% if course.rating_count is not None %}{{ course.rating_count }}
+    {% else %}Нет отзывов{%endif %}
 </p>
 <hr>
 <p class="text-muted">Количество просмотров: {{ course.views_num }}</p>
 <button type="button"><a href="{% url 'student-request' course.id%}">Подать заявку</a></button>
 
 <!-- для авторизованных -->
-<h4><strong>Комментарии</strong></h4>
-<p>Комментариев: {{ reviews.count }}</p>
+<h4 style="margin-top:20px"><strong>Отзывы</strong> ({{ reviews.count }})</h4>
+<p><strong>Здесь вы можете добавить свой отзыв</strong></p>
+<div class="shadowbox">
+    <form action="" method="post">
+        <!-- {{ form.as_p }} -->
+        <p>{{ form.text }}</p>
+        <p><b>Оцените курс</b></p>
+        <fieldset id="radio_rate">
+            {% for radio in form.rate %}
+            <label for="{{ radio.id_for_label }}">
+                {{ radio.choice_label }}
+                <span>{{ radio.tag }}</span>
+            </label>
+            {% endfor%}
+        </fieldset>
+        {% csrf_token %}
+        <p><button type="submit"><strong>Отправить</strong></button>
+            <button type="reset"><strong>Очистить данные</strong></button>
+        </p>
+        <!-- <p><input type="submit" value="Подтвердить"></p> -->
+    </form>
+</div>
+
+<hr>
 {% for review in reviews %}
-<p><strong>{{review.student.full_name}}</strong> Оценка: {{ review.rate }}</p>
+<p><strong>{{review.student.full_name}}</strong> Оценка курса: <b>{{ review.rate }}</b>.
+    <em><span style="font-size:12px;font-weight:bold"> Добавлен: {{review.added}}</span></em>
+</p>
 <p><em>{{ review.text }}</em></p>
 {% endfor %}
 
 {% if user.is_staff %}
 <hr>
 <div style="margin-left:20px;margin-top:20px">
-    <h4><strong>Студенты</strong></h4>
+    <h4><strong>Студенты </strong>{% if students %} ({{ students.count }}){% endif %}</h4>
     <hr>
     {% if students %}
     <ol>
         {% for student in students %}
 
-        <li><a href="{{ student.get_absolute_url }}">{{ student.full_name }}</a></li>
+        <li><a href="{{ student.get_absolute_url }}">{{ student.full_name }}</a>
+        </li>
         <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
         {% endfor %}
     </ol>

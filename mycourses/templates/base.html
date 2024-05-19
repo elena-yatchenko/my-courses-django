@@ -27,7 +27,9 @@
                     </ul>
                 </li>
                 <li><a href="/">Контакты</a></li>
-                <li><a href="{% url 'profile' %}">Личный кабинет</a></li>
+                {% if user.is_authenticated and student %}
+                <li><a href="{% url 'profile' student.id %}">Личный кабинет</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>

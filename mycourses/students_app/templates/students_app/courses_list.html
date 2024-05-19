@@ -9,7 +9,12 @@
     {% for course in page_obj %}
     <hr>
     <li>
-        <a href="{{ course.get_absolute_url }}">{{ course.name }}</a><br>Продолжительность: {{course.lasting }} мес.
+        <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
+        {% if user.is_staff %}
+        <button type="button"><a href="{% url 'add-mark' course.id %}?next={{request.path}}">
+                Добавить оценки по курсу</a></button>
+        {% endif %}
+        <br>Продолжительность: {{course.lasting }} мес.
     </li>
     {% endfor %}
 

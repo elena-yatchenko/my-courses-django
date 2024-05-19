@@ -2,7 +2,14 @@
 
 {% block content %}
 <h1>Личный кабинет: {{ student.full_name }}</h1>
-
+{% if image %}
+<p class="photo">
+    <img src="{{ image.image.url }}" style="width:150px;" alt="Ваше фото">
+</p>
+<p style="margin-bottom:20px;"><a href="{% url 'add-photo' student.pk %}">Изменить фото</a></p>
+{% else %}
+<button type="button" style="margin-bottom:20px;"><a href="{% url 'add-photo' student.pk %}">Добавить фото</a></button>
+{% endif %}
 <p><strong>Телефон:</strong> {{student.phone}}</p>
 <p><strong>E-mail:</strong> {{student.related_user.email}}</p>
 <p><strong>Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}} г.</p>
@@ -16,6 +23,7 @@
     <p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}} г.</p>
     <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
 </div>
+
 <p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
     Статус оплаты: {% if student.is_paid %}Оплачено
     {% elif not payments %}Оплаты нет

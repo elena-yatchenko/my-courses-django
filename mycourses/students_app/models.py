@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from datetime import timedelta, date
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
 
 # Create your models here.
 
@@ -29,10 +30,8 @@ class Course(models.Model):
     """Model representing a course"""
 
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True)
-    summary = models.TextField(
-        max_length=1000, help_text="Краткое описание курса")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    summary = models.TextField(max_length=1000, help_text="Краткое описание курса")
     lasting = models.IntegerField(
         default=1, help_text="Продолжительность курса, в месяцах"
     )
@@ -41,8 +40,7 @@ class Course(models.Model):
         max_digits=8, decimal_places=2, help_text="Стоимость в месяц, азн"
     )
     added = models.DateField(auto_now_add=True)
-    rating = models.DecimalField(
-        max_digits=3, decimal_places=2, blank=True, null=True)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
     deleted = models.DateField(auto_now=True)
     views_num = models.IntegerField(default=0)
@@ -66,19 +64,6 @@ class Course(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class Mark(models.Model):
-    """Model representing a mark"""
-
-    MARKS = (
-        (1, "1 - очень плохо"),
-        (2, "2 - плохо"),
-        (3, "3 - удовлетворительно"),
-        (4, "4 - хорошо"),
-        (5, "5 - отлично"),
-    )
-    mark_value = models.IntegerField(choices=MARKS)
 
 
 class Student(models.Model):
@@ -119,16 +104,16 @@ class Student(models.Model):
             return True
         return False
 
-    marks = models.ManyToManyField(Mark, blank=True)
+    # marks = models.ManyToManyField(Mark, blank=True)
     is_paid = models.BooleanField(default=False)
     is_deleted = models.BooleanField(default=False)
     deleted = models.DateField(auto_now=True)
 
     def average_mark(self):
-        """Определяет средний балл студента по курсу."""
-        mark_list = [int(mark.mark_value) for mark in self.marks.all()]
+        """Определяет средний балл студента"""
+        mark_list = [perf.mark for perf in self.performance_set.all()]
         if mark_list:
-            return sum(mark_list) / len(mark_list)
+            return round(sum(mark_list) / len(mark_list), 2)
         else:
             return "Оценок нет"
 
@@ -150,13 +135,30 @@ class Student(models.Model):
         return f"{self.name}, {self.surname}"
 
 
+class Performance(models.Model):
+    """Модель отражает показатели успеваемости студента"""
+
+    MARKS = (
+        (5, "5 - отлично"),
+        (4, "4 - хорошо"),
+        (3, "3 - удовлетворительно"),
+        (2, "2 - плохо"),
+        (1, "1 - очень плохо"),
+    )
+    mark = models.IntegerField(choices=MARKS)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    added = models.DateField(default=timezone.now())
+
+    def __str__(self):
+        return f"{self.mark}"
+
+
 class Payment(models.Model):
     """Model representing a payment for course"""
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    amount = models.DecimalField(
-        verbose_name="Сумма", max_digits=8, decimal_places=2)
-    paid_date = models.DateField(verbose_name="Дата оплаты", auto_now_add=True)
+    amount = models.DecimalField(verbose_name="Сумма", max_digits=8, decimal_places=2)
+    paid_date = models.DateField(verbose_name="Дата оплаты", default=date.today)
     document = models.FileField(upload_to="files/", null=True, blank=True)
 
     class Meta:
@@ -178,16 +180,17 @@ class Review(models.Model):
         help_text="Отзыв к курсу",
     )
     RATES = (
-        (1, "1"),
-        (2, "2"),
-        (3, "3"),
-        (4, "4"),
         (5, "5"),
+        (4, "4"),
+        (3, "3"),
+        (2, "2"),
+        (1, "1"),
     )
     rate = models.IntegerField(choices=RATES)
+    added = models.DateField(auto_now_add=True)
 
     class Meta:
-        ordering = ["-rate"]
+        ordering = ["added", "-id"]
         # verbose_name = "Отзыв"
 
     def get_summary(self):
@@ -200,7 +203,7 @@ class Review(models.Model):
 
 class Image(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, default="no_name")
     image = models.ImageField(upload_to="images/")
 
     def __str__(self):

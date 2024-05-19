@@ -1,14 +1,16 @@
 from django.core.files.storage import FileSystemStorage
-from .forms import PaymentForm, ConfirmationForm
-from .forms import RegisterUserForm, RegisterStudentForm
+from .forms import PaymentForm, ConfirmationForm, AddReviewForm, AddImageForm
+from .forms import RegisterUserForm, RegisterStudentForm, AddMarkForm
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
-from .models import Category, Course, Mark, Student, Payment, Review
+from .models import Category, Course, Student, Payment, Review, Performance
+from .models import Image
 from django.contrib.auth import logout, login
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 from datetime import date
 
@@ -19,12 +21,26 @@ def main(request):
     """Функция для отображения домашней (базовой) страницы сайта"""
     categories = Category.objects.all()
     request_number = Student.objects.filter(status="r").count()
-    # num_visits = request.session.get("num_visits", 0)
-    # request.session["num_visits"] = num_visits + 1
+    if request.user.is_authenticated:
+        current_user = request.user
+        current_student = (
+            current_user.student_set.exclude(is_deleted=True)
+            .exclude(status="f")
+            .first()
+        )
+        print(current_student)
+        # num_visits = request.session.get("num_visits", 0)
+        # request.session["num_visits"] = num_visits + 1
+    else:
+        current_student = None
     return render(
         request,
         "base.html",
-        context={"categories": categories, "request_number": request_number},
+        context={
+            "categories": categories,
+            "request_number": request_number,
+            "student": current_student,
+        },
     )
 
 
@@ -56,8 +72,7 @@ def students(request, status):
     return render(
         request,
         "students_app/students_list.html",
-        context={"status": status, "page_obj": page_obj,
-                 "student_list": student_list},
+        context={"status": status, "page_obj": page_obj, "student_list": student_list},
     )
 
 
@@ -67,21 +82,39 @@ def course_detail(request, id):
     reviews = course.review_set.all()
     course.views_num += 1
     course.save()
+    if request.method == "POST":
+        review_form = AddReviewForm(request.POST)
+        if review_form.is_valid():
+            user = request.user
+            student = Student.objects.filter(related_user=user).first()
+            cd = review_form.cleaned_data
+            new_review = Review(
+                student=student, course=course, text=cd["text"], rate=cd["rate"]
+            )
+            new_review.save()
+            return redirect("course-detail", course.id)
+    else:
+        review_form = AddReviewForm()
     return render(
         request,
         "students_app/course_detail.html",
-        context={"course": course, "students": students, "reviews": reviews},
+        context={
+            "course": course,
+            "students": students,
+            "reviews": reviews,
+            "form": review_form,
+        },
     )
 
 
 def student_detail(request, id):
     student = Student.objects.filter(pk=id, is_deleted=False).first()
     payments = Payment.objects.filter(student=student)
-    # print(student)
+    image = Image.objects.filter(student=student).first()
     return render(
         request,
         "students_app/student_detail.html",
-        context={"student": student, "payments": payments},
+        context={"student": student, "payments": payments, "image": image},
     )
 
 
@@ -91,12 +124,25 @@ def logout_view(request):
 
 
 @login_required
-def profile(request):
-    student = Student.objects.filter(related_user=request.user).first()
+def profile(request, stud_id):
+    student = Student.objects.filter(pk=stud_id).first()
+    image = Image.objects.filter(student=student).first()
+    # if request.method == "POST":
+    #     image_form = AddImageForm(request.POST, request.FILES)
+    #     if image_form.is_valid():
+    #         image = image_form.cleaned_data["image"]
+    #         title = image.name
+    #         fs = FileSystemStorage()
+    #         fs.save(image.name, image)
+    #         my_image = Image(title=title, student=student, image=image)
+    #         my_image.save()
+    #         return redirect("profile", student.pk)
+    # else:
+    #     image_form = AddImageForm()
     return render(
         request,
         "students_app/profile.html",
-        context={"student": student},
+        context={"student": student, "image": image},
     )
 
 
@@ -135,30 +181,44 @@ def register(request):
 @login_required
 def student_request(request, course_id):
     current_user = request.user
-    if request.method == "POST":
-        course = Course.objects.filter(pk=course_id).first()
-        form = RegisterStudentForm(request.POST)
-        if form.is_valid():
-            cd = form.cleaned_data
-            student = Student(
-                name=cd["name"],
-                surname=cd["surname"],
-                phone=cd["phone"],
-                date_of_birth=cd["date_of_birth"],
-                course=course,
-                status="r",
-                related_user=current_user,
-            )
-            student.save()
-            current_user.last_name = cd["surname"]
-            current_user.save()
-            return redirect("profile")
-        else:
-            # !!!! добавить ЛОГИРОВАНИЕ
-            message = "Некорректные данные"
+    course = Course.objects.filter(pk=course_id).first()
+    if current_user.student_set.filter(course=course, status="a"):
+        return HttpResponse(
+            "<h2>Похоже, вы уже обучаетесь на этом курсе в настоящее время</h2>"
+        )
+    elif current_user.student_set.filter(course=course, status="r"):
+        return HttpResponse(
+            "<h2>Похоже, вы уже подали заявку на обучение на этом курсе</h2>"
+        )
     else:
-        form = RegisterStudentForm(initial={"name": current_user.first_name})
-        message = "Заполните поля формы"
+        if request.method == "POST":
+            form = RegisterStudentForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                student = Student(
+                    name=cd["name"],
+                    surname=cd["surname"],
+                    phone=cd["phone"],
+                    date_of_birth=cd["date_of_birth"],
+                    course=course,
+                    status="r",
+                    related_user=current_user,
+                )
+                student.save()
+                # current_user.last_name = cd["surname"]
+                # current_user.save()
+                return redirect("profile", student.id)
+            else:
+                # !!!! добавить ЛОГИРОВАНИЕ
+                message = "Некорректные данные"
+        else:
+            form = RegisterStudentForm(
+                initial={
+                    "name": current_user.first_name,
+                    "surname": current_user.last_name,
+                }
+            )
+            message = "Заполните поля формы"
 
     return render(
         request,
@@ -213,6 +273,8 @@ def student_payment(request, stud_id=None):
     )
 
 
+@staff_member_required
+# @permission_required("is_staff")
 def student_approve(request, stud_id):
     # back_url = request.path
     back_url = request.GET["next"]
@@ -221,25 +283,119 @@ def student_approve(request, stud_id):
         confirm_form = ConfirmationForm(request.POST)
         if confirm_form.is_valid():
             confirm_choice = confirm_form.cleaned_data["confirm_choice"]
-            print(confirm_choice)
-            if confirm_choice == 'False':
+            if confirm_choice == "False":
                 return redirect(back_url)
             else:
                 user = student.related_user
-                group = Group.objects.get(name='Students')
+                group = Group.objects.get(name="Students")
                 user.groups.add(group)
-                student.status = 'a'
+                student.status = "a"
                 student.reg_date = date.today()
                 student.save()
                 return redirect("student-detail", stud_id)
-                
+
         else:
             message = "Некорректные данные"
     else:
         confirm_form = ConfirmationForm()
-        message = "Подтвердите Ваш выбор"
+        message = "Подтверждение заявки на обучение студента: "
     return render(
         request,
         "students_app/confirmation.html",
-        {"form": confirm_form, "message": message, 'student': student},
+        {"form": confirm_form, "message": message, "student": student},
+    )
+
+
+@staff_member_required
+def student_archive(request, stud_id):
+    # получаем из GET запроса путь к странице, с которой запущена данная функция-представление
+    back_url = request.GET["next"]
+    student = Student.objects.filter(pk=stud_id, is_deleted=False).first()
+    if request.method == "POST":
+        confirm_form = ConfirmationForm(request.POST)
+        if confirm_form.is_valid():
+            confirm_choice = confirm_form.cleaned_data["confirm_choice"]
+            if confirm_choice == "False":
+                return redirect(back_url)
+            else:
+                user = student.related_user
+                group_for_add, created = Group.objects.get_or_create(name="Archive")
+                group_for_delete = Group.objects.get(name="Students")
+                user.groups.add(group_for_add)
+                user.groups.remove(group_for_delete)
+                student.status = "f"
+                student.save()
+                return redirect("student-detail", stud_id)
+
+        else:
+            message = "Некорректные данные"
+    else:
+        confirm_form = ConfirmationForm()
+        message = "Добавление в архив студента: "
+    return render(
+        request,
+        "students_app/confirmation.html",
+        {"form": confirm_form, "message": message, "student": student},
+    )
+
+
+@permission_required("students_app.add_performance")
+@permission_required("students_app.change_performance")
+def add_mark(request, course_id):
+    """Добавляем оценку студента"""
+    back_url = request.GET["next"]
+    course = Course.objects.filter(pk=course_id).first()
+    """переопределяем queryset, чтобы давался список не всех студентов, а только выбранного курса"""
+    switch_query = Student.objects.filter(course=course, status="a")
+    current_date = date.today()
+    if request.method == "POST":
+        add_form = AddMarkForm(request.POST)
+        if add_form.is_valid():
+            cd = add_form.cleaned_data
+            mark = cd["mark"]
+            student = cd["student"]
+            added = cd["added"]
+            performance = Performance(student=student, mark=mark, added=added)
+            performance.save()
+            message = f"Оценка для студента {student.full_name} добавлена успешно."
+            add_form = AddMarkForm()
+            add_form.fields["student"].queryset = switch_query
+            # return redirect(back_url)
+        else:
+            message = "Некорректные данные"
+    else:
+        add_form = AddMarkForm()
+        add_form.fields["student"].queryset = switch_query
+        message = "Введите оценку"
+    return render(
+        request,
+        "students_app/mark_form.html",
+        {
+            "form": add_form,
+            "message": message,
+            "current_date": current_date,
+            "course": course,
+            "back_url": back_url,
+        },
+    )
+
+
+def add_photo(request, stud_id):
+    student = Student.objects.filter(pk=stud_id).first()
+    if request.method == "POST":
+        image_form = AddImageForm(request.POST, request.FILES)
+        if image_form.is_valid():
+            image = image_form.cleaned_data["image"]
+            title = image.name
+            fs = FileSystemStorage()
+            fs.save(image.name, image)
+            my_image = Image(title=title, student=student, image=image)
+            my_image.save()
+            return redirect("profile", student.pk)
+    else:
+        image_form = AddImageForm()
+    return render(
+        request,
+        "students_app/photo.html",
+        context={"form": image_form},
     )

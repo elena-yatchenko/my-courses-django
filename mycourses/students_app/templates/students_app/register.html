@@ -5,7 +5,7 @@
 
 {% block content %}
 <h1>Создание нового пользователя</h1>
-<h4>{{ message }}</h4>
+<h4 class="{% if form.errors %}text-danger{% else %}text-success{% endif %}">{{ message }}</h4>
 
 <div class="shadowbox">
     <form action="." method="post">

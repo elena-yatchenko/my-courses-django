@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Добавление фото{% endblock %}
+
+{% block content %}
+<h4>Добавьте ваше фото</h4>
+<div class="shadowbox">
+    <form action="" method="post" enctype="multipart/form-data">
+        {{ form.as_p }}
+        {% csrf_token %}
+        <p><button type="submit"><strong>Добавить</strong></button>
+            <button type="reset"><strong>Очистить данные</strong></button>
+        </p>
+        <!-- <p><input type="submit" value="Подтвердить"></p> -->
+    </form>
+</div>
+{% endblock %}
