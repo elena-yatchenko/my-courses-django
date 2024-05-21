@@ -48,15 +48,17 @@
 
     {% for payment in payments %}
     <ol>
-        <li><strong><strong>Сумма: </strong>{{ payment.amount }} азн
-                <ul>
-                    <li>Дата:
-            </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</li>
-        <li>{% if payment.document %}<strong>Документ, подтверждающий оплату: </strong>
-            <a href="{{ payment.document.url }}">{{ payment.document.name }}</a>
-            {% else %}<p class="text-danger">(документ, подтверждающий оплату, отсутствует){% endif %}</p>
-        </li>
-        </ul>
+        <li><strong>Сумма: </strong>{{ payment.amount }} азн
+            <button type="button" style="margin-left:80px"><a href="{% url 'payment-update' student.id payment.id %}">
+                    Редактировать данные</a></button>
+            <ul>
+                <li>Дата:
+                    </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</li>
+                <li>{% if payment.document %}<strong>Документ, подтверждающий оплату: </strong>
+                    <a href="{{ payment.document.url }}">{{ payment.document.name }}</a>
+                    {% else %}<p class="text-danger">(документ, подтверждающий оплату, отсутствует){% endif %}</p>
+                </li>
+            </ul>
         </li>
     </ol>
     {% endfor %}

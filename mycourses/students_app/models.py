@@ -96,6 +96,7 @@ class Student(models.Model):
     )
     request_date = models.DateField(auto_now_add=True)
     reg_date = models.DateField(blank=True, null=True)
+    updated = models.DateField(auto_now=True)
 
     @property
     def is_finished(self):
@@ -147,7 +148,8 @@ class Performance(models.Model):
     )
     mark = models.IntegerField(choices=MARKS)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    added = models.DateField(default=timezone.now())
+    date_of_mark = models.DateField(default=timezone.now())
+    updated = models.DateField(auto_now=True)
 
     def __str__(self):
         return f"{self.mark}"
@@ -160,6 +162,8 @@ class Payment(models.Model):
     amount = models.DecimalField(verbose_name="Сумма", max_digits=8, decimal_places=2)
     paid_date = models.DateField(verbose_name="Дата оплаты", default=date.today)
     document = models.FileField(upload_to="files/", null=True, blank=True)
+    added = models.DateField(auto_now_add=True)
+    updated = models.DateField(auto_now=True)
 
     class Meta:
         ordering = ["-paid_date"]
@@ -205,6 +209,8 @@ class Image(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     title = models.CharField(max_length=200, default="no_name")
     image = models.ImageField(upload_to="images/")
+    added = models.DateField(auto_now_add=True)
+    updated = models.DateField(auto_now=True)
 
     def __str__(self):
         return self.title

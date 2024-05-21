@@ -12,9 +12,8 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
-from datetime import date
-
-# Create your views here.
+from datetime import date, datetime
+import pandas as pd
 
 
 def main(request):
@@ -29,8 +28,7 @@ def main(request):
             .first()
         )
         print(current_student)
-        # num_visits = request.session.get("num_visits", 0)
-        # request.session["num_visits"] = num_visits + 1
+
     else:
         current_student = None
     return render(
@@ -72,7 +70,8 @@ def students(request, status):
     return render(
         request,
         "students_app/students_list.html",
-        context={"status": status, "page_obj": page_obj, "student_list": student_list},
+        context={"status": status, "page_obj": page_obj,
+                 "student_list": student_list},
     )
 
 
@@ -124,9 +123,21 @@ def logout_view(request):
 
 
 @login_required
-def profile(request, stud_id):
-    student = Student.objects.filter(pk=stud_id).first()
+def profile(request):
+    current_user = request.user
+    student = current_user.student_set.first()
     image = Image.objects.filter(student=student).first()
+    payments = Payment.objects.filter(student=student)
+    visit_date = request.session.get("visit_date", None)
+    if visit_date is None:
+        visit_date = date.today()
+    else:
+        visit_date = datetime.strptime(visit_date, '%Y-%m-%d')
+        """переводим дату во формат строки для добавления в сессии 
+        (иначе будет ошибка Object of type date is not JSON serializable),
+       а для вывода на страницу, переводим обратно в строку"""
+    request.session["visit_date"] = date.today().strftime('%Y-%m-%d')
+
     # if request.method == "POST":
     #     image_form = AddImageForm(request.POST, request.FILES)
     #     if image_form.is_valid():
@@ -142,7 +153,8 @@ def profile(request, stud_id):
     return render(
         request,
         "students_app/profile.html",
-        context={"student": student, "image": image},
+        context={"student": student, "image": image,
+                 "visit_date": visit_date, 'payments': payments},
     )
 
 
@@ -195,18 +207,24 @@ def student_request(request, course_id):
             form = RegisterStudentForm(request.POST)
             if form.is_valid():
                 cd = form.cleaned_data
+                name = cd["name"]
+                surname = cd["surname"]
+                email = cd['email']
                 student = Student(
-                    name=cd["name"],
-                    surname=cd["surname"],
+                    name=name,
+                    surname=surname,
                     phone=cd["phone"],
+                    email=email,
                     date_of_birth=cd["date_of_birth"],
                     course=course,
                     status="r",
                     related_user=current_user,
                 )
                 student.save()
-                # current_user.last_name = cd["surname"]
-                # current_user.save()
+                current_user.last_name = surname
+                current_user.first_name = name
+                current_user.email = email
+                current_user.save()
                 return redirect("profile", student.id)
             else:
                 # !!!! добавить ЛОГИРОВАНИЕ
@@ -218,7 +236,48 @@ def student_request(request, course_id):
                     "surname": current_user.last_name,
                 }
             )
-            message = "Заполните поля формы"
+            message = "Заявка на обучение"
+
+    return render(
+        request,
+        "students_app/student_form.html",
+        {"form": form, "message": message},
+    )
+
+
+def student_update(request, stud_id):
+    current_user = request.user
+    student = Student.objects.filter(pk=stud_id).first()
+    if request.method == "POST":
+        form = RegisterStudentForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            name = cd["name"]
+            surname = cd["surname"]
+            email = cd['email']
+            phone = cd['phone']
+            student.name = name
+            student.surname = surname
+            student.phone = phone
+            student.save()
+            current_user.last_name = surname
+            current_user.first_name = name
+            current_user.email = email
+            current_user.save()
+            return redirect("profile", stud_id)
+        else:
+            # !!!! добавить ЛОГИРОВАНИЕ
+            message = "Некорректные данные"
+    else:
+        form = RegisterStudentForm(
+            initial={
+                "name": student.name,
+                "surname": student.surname,
+                'email': current_user.email,
+                'phone': student.phone,
+            }
+        )
+        message = "Редактирование данных студента"
 
     return render(
         request,
@@ -253,7 +312,6 @@ def student_payment(request, stud_id=None):
             # !!!! добавить ЛОГИРОВАНИЕ
             message = "Некорректные данные"
     else:
-
         if stud_id is not None:
             initial_student = Student.objects.filter(pk=stud_id).first()
             payment_form = PaymentForm(
@@ -264,6 +322,50 @@ def student_payment(request, stud_id=None):
             )
         else:
             payment_form = PaymentForm()
+        message = "Заполните поля формы"
+
+    return render(
+        request,
+        "students_app/payment_form.html",
+        {"form": payment_form, "message": message},
+    )
+
+
+@permission_required("students_app.add_payment")
+@permission_required("students_app.change_payment")
+def payment_update(request, stud_id, pay_id):
+    student = Student.objects.filter(pk=stud_id).first()
+    payment = Payment.objects.filter(pk=pay_id).first()
+    if request.method == "POST":
+        payment_form = PaymentForm(request.POST, request.FILES)
+        if payment_form.is_valid():
+            amount = payment_form.cleaned_data["amount"]
+            paid_date = payment_form.cleaned_data["paid_date"]
+            document = payment_form.cleaned_data["document"]
+            if document:
+                fs = FileSystemStorage()
+                fs.save(document.name, document)
+            payment.amount = amount
+            payment.paid_date = paid_date
+            payment.document = document
+            payment.save()
+            # проверка и автообновление атрибута is_paid студента
+            if student.rest_of_payment() == 0:
+                student.is_paid = True
+                student.save()
+            return redirect("student-detail", student.id)
+        else:
+            # !!!! добавить ЛОГИРОВАНИЕ
+            message = "Некорректные данные"
+    else:
+        payment_form = PaymentForm(
+            initial={
+                "student": student,
+                "amount": payment.amount,
+                'paid_date': payment.paid_date,
+            }
+        )
+        # payment_form.fields["student"].disabled = True
         message = "Заполните поля формы"
 
     return render(
@@ -319,7 +421,8 @@ def student_archive(request, stud_id):
                 return redirect(back_url)
             else:
                 user = student.related_user
-                group_for_add, created = Group.objects.get_or_create(name="Archive")
+                group_for_add, created = Group.objects.get_or_create(
+                    name="Archive")
                 group_for_delete = Group.objects.get(name="Students")
                 user.groups.add(group_for_add)
                 user.groups.remove(group_for_delete)
@@ -354,8 +457,9 @@ def add_mark(request, course_id):
             cd = add_form.cleaned_data
             mark = cd["mark"]
             student = cd["student"]
-            added = cd["added"]
-            performance = Performance(student=student, mark=mark, added=added)
+            date_of_mark = cd["date_of_mark"]
+            performance = Performance(
+                student=student, mark=mark, date_of_mark=date_of_mark)
             performance.save()
             message = f"Оценка для студента {student.full_name} добавлена успешно."
             add_form = AddMarkForm()

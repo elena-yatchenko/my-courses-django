@@ -46,9 +46,15 @@ class RegisterStudentForm(forms.Form):
         ),
         help_text="Номер телефона должен начинаться со знака '+', далее код страны и номер",
     )
+    email = forms.EmailField(widget=forms.EmailInput(
+        attrs={"class": "form-control", "placeholder": "examlple@mail.ru"}),
+        help_text="Обратите внимание, что при изменении данного поля изменяется email, указанный при регистрации",
+    )
+
     date_of_birth = forms.DateField(
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     # course = forms.ModelChoiceField(label="Курс", queryset=Course.objects.all())
 
@@ -70,7 +76,8 @@ class PaymentForm(forms.Form):
     paid_date = forms.DateField(
         label="Дата оплаты",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     document = forms.FileField(
         required=False,
@@ -95,7 +102,8 @@ class PaymentForm(forms.Form):
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]
         if paid_date > date.today():
-            raise forms.ValidationError("Дата оплаты не может быть больше текущей даты")
+            raise forms.ValidationError(
+                "Дата оплаты не может быть больше текущей даты")
         return paid_date
 
 
@@ -157,10 +165,11 @@ class AddMarkForm(forms.Form):
         choices=MARKS,
         required=True,
     )
-    added = forms.DateField(
+    date_of_mark = forms.DateField(
         label="Дата",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
 
     # def __init__(self, course, *args, **kwargs):

@@ -4,7 +4,9 @@
 <h1>Личный кабинет: {{ student.full_name }}</h1>
 {% if image %}
 <p class="photo">
-    <img src="{{ image.image.url }}" style="width:150px;" alt="Ваше фото">
+    <img src="{{ image.image.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 50px;"
+        alt="Ваше фото">
+    <!-- class="img-responsive" style="width: 100%; float: left; margin-right: 10px;"  -->
 </p>
 <p style="margin-bottom:20px;"><a href="{% url 'add-photo' student.pk %}">Изменить фото</a></p>
 {% else %}
@@ -13,6 +15,7 @@
 <p><strong>Телефон:</strong> {{student.phone}}</p>
 <p><strong>E-mail:</strong> {{student.related_user.email}}</p>
 <p><strong>Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}} г.</p>
+<button type="button"><a href="{% url 'student-update' student.id%}">Редактировать данные</a></button>
 {% if student.status == 'r' %}
 <br>
 <h4><strong>Ваша заявка находится на рассмотрении</strong></h4>
@@ -25,7 +28,7 @@
 </div>
 
 <p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
-    Статус оплаты: {% if student.is_paid %}Оплачено
+    Статус оплаты: {% if student.is_paid %}Оплачено полностью
     {% elif not payments %}Оплаты нет
     {% else %}Оплачено частично{% endif %}</p>
 <hr>
@@ -38,12 +41,13 @@
     {% for payment in payments %}
     <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
     <p><strong>Сумма: </strong>{{ payment.amount }} азн</p>
-    <br>
-
-
     {% endfor %}
     {% else %}<p>Нет зарегистрированных платежей</p>
     {% endif %}
 </div>
+<div style="margin-top:20px; margin-bottom:20px;">
+    <p class="text-muted">Дата последнего посещения: {{ visit_date|date:"d.m.Y" }}</p>
+</div>
+
 {% endif %}
 {% endblock %}

@@ -1,18 +1,17 @@
 {% extends "base.html" %}
 
-{% block title %}Заявка на обучение{% endblock %}
+{% block title %}Студент{% endblock %}
 
 
 {% block content %}
-<h1>Создаем заявку на обучение</h1>
-<h4>Заполните поля формы</h4>
+<h1>{{ message }}</h1>
 
 <div class="shadowbox">
     <form action="" method="post">
         {{ form.as_p }}
         {% csrf_token %}
         <!-- <p><input type="submit" value="Создать заявку"></p> -->
-        <p><button type="submit"><strong>Создать заявку на обучение</strong></button>
+        <p><button type="submit"><strong>Подтвердить</strong></button>
             <button type="reset"><strong>Очистить данные</strong></button>
         </p>
     </form>
