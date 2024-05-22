@@ -119,7 +119,8 @@ def student_detail(request, id):
 
 def logout_view(request):
     logout(request)
-    return redirect("/")  # на главную страницу сайта
+    return render(request, 'registration/logged_out.html')
+    # return redirect("/")  # на главную страницу сайта
 
 
 @login_required
@@ -127,14 +128,14 @@ def profile(request):
     current_user = request.user
     # student = current_user.student_set.first()
     students = current_user.student_set.all()
-    stud_dict = {}
+    stud_pay = {}
     for student in students:
-        data = []
-        image = Image.objects.filter(student=student).first()
-        data.append(image)
+        print(student.image_set)
+        # data = []
+        # image = Image.objects.filter(student=student).first()
+        # stud_image[student] = image
         payments = Payment.objects.filter(student=student)
-        data.append(payments)
-        stud_dict[student] = data
+        stud_pay[student] = payments
 
     visit_date = request.session.get("visit_date", None)
     if visit_date is None:
@@ -148,8 +149,9 @@ def profile(request):
     return render(
         request,
         "students_app/profile.html",
-        context={"stud_dict": stud_dict,
-                 "visit_date": visit_date},
+        context={
+            'stud_pay': stud_pay,
+            'visit_date': visit_date},
     )
     # return render(
     #     request,
@@ -261,11 +263,9 @@ def student_update(request, stud_id):
             student.surname = surname
             student.phone = phone
             student.save()
-            current_user.last_name = surname
-            current_user.first_name = name
             current_user.email = email
             current_user.save()
-            return redirect("profile", stud_id)
+            return redirect("profile")
         else:
             # !!!! добавить ЛОГИРОВАНИЕ
             message = "Некорректные данные"
@@ -509,7 +509,7 @@ def add_photo(request, stud_id):
             fs.save(image.name, image)
             my_image = Image(title=title, student=student, image=image)
             my_image.save()
-            return redirect("profile", student.pk)
+            return redirect("profile")
     else:
         image_form = AddImageForm()
     return render(
