@@ -93,11 +93,51 @@ class PaymentForm(forms.Form):
         amount = self.cleaned_data["amount"]
         student = self.cleaned_data["student"]
         rest_of_payment = student.rest_of_payment()
-        if amount >= rest_of_payment:
+        if amount > rest_of_payment:
             raise forms.ValidationError(
                 f"Сумма оплаты превышает задолженность - {rest_of_payment}"
             )
         return amount
+
+    def clean_paid_date(self):
+        paid_date = self.cleaned_data["paid_date"]
+        if paid_date > date.today():
+            raise forms.ValidationError(
+                "Дата оплаты не может быть больше текущей даты")
+        return paid_date
+
+
+class PaymentChangeForm(forms.Form):
+    """Форма используется для изменения оплаты"""
+
+    student = forms.ModelChoiceField(
+        label="Студент",
+        disabled=True,
+        queryset=Student.objects.all(),
+        widget=forms.Select(attrs={"class": "form-check-input"}),
+        required=False
+    )
+    amount = forms.DecimalField(
+        label="Сумма оплаты",
+        max_digits=8,
+        decimal_places=2,
+        widget=forms.NumberInput(attrs={"class": "form-control"}),
+    )
+    paid_date = forms.DateField(
+        label="Дата оплаты",
+        initial=date.today(),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
+    )
+    document = forms.FileField(
+        required=False,
+        widget=forms.FileInput(
+            attrs={
+                "class": "form-control",
+                "placeholder": "Загрузите документ об оплате",
+            }
+        ),
+    )
 
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-danger">{{message}}</h2>
+<hr>
+<h4>Вы можете вернуться на <a href="{% url 'student-detail' student.id%}">страницу студента</a> и проверить данные
+    оплаты
+</h4>
+{% endblock %}

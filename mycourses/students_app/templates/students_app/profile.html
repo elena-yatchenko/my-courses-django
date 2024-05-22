@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Личный кабинет: {{ student.full_name }}</h1>
-{% if image %}
+<h1>Личный кабинет пользователя: {{ user.first_name }} {{ user.last_name }}</h1>
+{% for student, data in stud_dict.items %}
+<h3>Студент {{ student.full_name }}</h3>
+
+<!-- {% if image %} -->
+{% if data[0] %}
 <p class="photo">
-    <img src="{{ image.image.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 50px;"
+    <img src="{{ data[0].image.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 50px;"
         alt="Ваше фото">
     <!-- class="img-responsive" style="width: 100%; float: left; margin-right: 10px;"  -->
 </p>
@@ -27,9 +31,9 @@
     <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
 </div>
 
-<p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
+<p class="{% if student.is_paid %}text-success{% elif not data[1] %}text-danger{% else %}text-warning{% endif %}">
     Статус оплаты: {% if student.is_paid %}Оплачено полностью
-    {% elif not payments %}Оплаты нет
+    {% elif not data[1] %}Оплаты нет
     {% else %}Оплачено частично{% endif %}</p>
 <hr>
 <div style="margin-left:20px;margin-top:20px">
@@ -37,8 +41,8 @@
     <br>
     <p class="text-success"><strong>Общая стоимость обучения: {{ student.course.total_cost}} азн<strong></strong>
     </p><br>
-    {% if payments %}
-    {% for payment in payments %}
+    {% if data[1] %}
+    {% for payment in data[1] %}
     <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
     <p><strong>Сумма: </strong>{{ payment.amount }} азн</p>
     {% endfor %}
@@ -50,4 +54,5 @@
 </div>
 
 {% endif %}
+{% endfor %}
 {% endblock %}

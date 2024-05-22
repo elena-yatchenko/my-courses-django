@@ -4,7 +4,8 @@
 <h1>Студент: {{ student.full_name }}</h1>
 {% if image %}
 <p class="photo">
-    <img src="{{ image.image.url }}" style="width:150px;" alt="Ваше фото">
+    <img src="{{ image.image.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 80px;"
+        alt="Ваше фото">
 </p>
 {% endif %}
 <p><strong>Телефон:</strong> {{student.phone}}</p>

@@ -1,6 +1,6 @@
 from django.core.files.storage import FileSystemStorage
 from .forms import PaymentForm, ConfirmationForm, AddReviewForm, AddImageForm
-from .forms import RegisterUserForm, RegisterStudentForm, AddMarkForm
+from .forms import RegisterUserForm, RegisterStudentForm, AddMarkForm, PaymentChangeForm
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .models import Category, Course, Student, Payment, Review, Performance
@@ -13,7 +13,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import Group
 from datetime import date, datetime
-import pandas as pd
+from django.core.exceptions import ValidationError
 
 
 def main(request):
@@ -125,9 +125,17 @@ def logout_view(request):
 @login_required
 def profile(request):
     current_user = request.user
-    student = current_user.student_set.first()
-    image = Image.objects.filter(student=student).first()
-    payments = Payment.objects.filter(student=student)
+    # student = current_user.student_set.first()
+    students = current_user.student_set.all()
+    stud_dict = {}
+    for student in students:
+        data = []
+        image = Image.objects.filter(student=student).first()
+        data.append(image)
+        payments = Payment.objects.filter(student=student)
+        data.append(payments)
+        stud_dict[student] = data
+
     visit_date = request.session.get("visit_date", None)
     if visit_date is None:
         visit_date = date.today()
@@ -137,25 +145,18 @@ def profile(request):
         (иначе будет ошибка Object of type date is not JSON serializable),
        а для вывода на страницу, переводим обратно в строку"""
     request.session["visit_date"] = date.today().strftime('%Y-%m-%d')
-
-    # if request.method == "POST":
-    #     image_form = AddImageForm(request.POST, request.FILES)
-    #     if image_form.is_valid():
-    #         image = image_form.cleaned_data["image"]
-    #         title = image.name
-    #         fs = FileSystemStorage()
-    #         fs.save(image.name, image)
-    #         my_image = Image(title=title, student=student, image=image)
-    #         my_image.save()
-    #         return redirect("profile", student.pk)
-    # else:
-    #     image_form = AddImageForm()
     return render(
         request,
         "students_app/profile.html",
-        context={"student": student, "image": image,
-                 "visit_date": visit_date, 'payments': payments},
+        context={"stud_dict": stud_dict,
+                 "visit_date": visit_date},
     )
+    # return render(
+    #     request,
+    #     "students_app/profile.html",
+    #     context={"student": student, "image": image,
+    #              "visit_date": visit_date, 'payments': payments},
+    # )
 
 
 """ Представления для работы с формами обработки данных"""
@@ -337,28 +338,41 @@ def payment_update(request, stud_id, pay_id):
     student = Student.objects.filter(pk=stud_id).first()
     payment = Payment.objects.filter(pk=pay_id).first()
     if request.method == "POST":
-        payment_form = PaymentForm(request.POST, request.FILES)
-        if payment_form.is_valid():
-            amount = payment_form.cleaned_data["amount"]
-            paid_date = payment_form.cleaned_data["paid_date"]
-            document = payment_form.cleaned_data["document"]
+        payment_change_form = PaymentChangeForm(request.POST, request.FILES)
+        if payment_change_form.is_valid():
+            amount_before = payment.amount
+            amount = payment_change_form.cleaned_data["amount"]
+            payment.amount = amount
+            paid_date = payment_change_form.cleaned_data["paid_date"]
+            payment.paid_date = paid_date
+            document = payment_change_form.cleaned_data["document"]
             if document:
                 fs = FileSystemStorage()
                 fs.save(document.name, document)
-            payment.amount = amount
-            payment.paid_date = paid_date
-            payment.document = document
+                payment.document = document
             payment.save()
-            # проверка и автообновление атрибута is_paid студента
-            if student.rest_of_payment() == 0:
+            rest_of_payment = student.rest_of_payment()
+            if rest_of_payment < 0:
+                payment.amount = amount_before
+                payment.save()
+                message = "Сумма оплаты превышает задолженность!"
+                return render(
+                    request,
+                    "students_app/error.html",
+                    {"student": student, "message": message},
+                )
+            elif rest_of_payment == 0:
                 student.is_paid = True
                 student.save()
-            return redirect("student-detail", student.id)
+            else:
+                student.is_paid = False
+                student.save()
+            return redirect("student-detail", stud_id)
         else:
             # !!!! добавить ЛОГИРОВАНИЕ
             message = "Некорректные данные"
     else:
-        payment_form = PaymentForm(
+        payment_change_form = PaymentChangeForm(
             initial={
                 "student": student,
                 "amount": payment.amount,
@@ -371,7 +385,7 @@ def payment_update(request, stud_id, pay_id):
     return render(
         request,
         "students_app/payment_form.html",
-        {"form": payment_form, "message": message},
+        {"form": payment_change_form, "message": message},
     )
 
 
