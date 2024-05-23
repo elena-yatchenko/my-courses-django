@@ -14,4 +14,11 @@
         <!-- <p><input type="submit" value="Подтвердить"></p> -->
     </form>
 </div>
+
+{% if image %}
+<h3>Изображение загружено успешно!</h3>
+<img src="{{ image.url}}" alt="connect" style="max-height:300px">
+<hr>
+<p><button type="button"><a href="{% url 'profile' %}">Вернуться в личный кабинет</a></button></p>
+{% endif %}
 {% endblock %}

@@ -27,8 +27,6 @@ def main(request):
             .exclude(status="f")
             .first()
         )
-        print(current_student)
-
     else:
         current_student = None
     return render(
@@ -300,9 +298,9 @@ def student_payment(request, stud_id=None):
             student = payment_form.cleaned_data["student"]
             paid_date = payment_form.cleaned_data["paid_date"]
             document = payment_form.cleaned_data["document"]
-            if document:
-                fs = FileSystemStorage()
-                fs.save(document.name, document)
+            # if document:
+            #     fs = FileSystemStorage()
+            #     fs.save(document.name, document)
             payment = Payment(
                 amount=amount, student=student, paid_date=paid_date, document=document
             )
@@ -350,8 +348,8 @@ def payment_update(request, stud_id, pay_id):
             payment.paid_date = paid_date
             document = payment_change_form.cleaned_data["document"]
             if document:
-                fs = FileSystemStorage()
-                fs.save(document.name, document)
+                # fs = FileSystemStorage()
+                # fs.save(document.name, document)
                 payment.document = document
             payment.save()
             rest_of_payment = student.rest_of_payment()
@@ -507,15 +505,16 @@ def add_photo(request, stud_id):
         image_form = AddImageForm(request.POST, request.FILES)
         if image_form.is_valid():
             image = image_form.cleaned_data["image"]
-            # title = image.name
-            # fs = FileSystemStorage(location="media/images/")
-            fs = FileSystemStorage()
-            fs.save(image.name, image)
+            # fs = FileSystemStorage()
+            # fs.save(image.name, image)
             student.photo = image
-            # my_image = Image(title=title, student=student, image=image)
-            # my_image.save()
             student.save()
-            return redirect("profile")
+            # return redirect("profile")
+            return render(
+                request,
+                "students_app/photo.html",
+                context={"image": student.photo},
+            )
     else:
         image_form = AddImageForm()
     return render(
