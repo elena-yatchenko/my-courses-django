@@ -4,8 +4,10 @@ from django.contrib.auth.models import User
 from datetime import timedelta, date
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils import timezone
+from django.core.files.storage import FileSystemStorage
 
 # Create your models here.
+# image_storage = FileSystemStorage(location='media/images')
 
 
 class Category(models.Model):
@@ -79,7 +81,7 @@ class Student(models.Model):
     phone = models.CharField(verbose_name="Номер телефона", max_length=50)
     date_of_birth = models.DateField()
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
-    # photo = models.ImageField(upload_to="photoes/", null=True, blank=True)
+    photo = models.ImageField(upload_to='images/', blank=True, null=True)
 
     @property
     def full_name(self):
@@ -210,12 +212,16 @@ class Review(models.Model):
         return f"{self.rate}"
 
 
-class Image(models.Model):
-    student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    title = models.CharField(max_length=200, default="no_name")
-    image = models.ImageField(upload_to="images/")
-    added = models.DateField(auto_now_add=True)
-    updated = models.DateField(auto_now=True)
+# class Image(models.Model):
+#     student = models.ForeignKey(Student, on_delete=models.CASCADE)
+#     title = models.CharField(max_length=200, default="no_name")
+#     # image = models.ImageField(upload_to="images/")
+#     image = models.ImageField(storage=image_storage)
+#     added = models.DateField(auto_now_add=True)
+#     updated = models.DateField(auto_now=True)
 
-    def __str__(self):
-        return self.title
+#     class Meta:
+#         ordering = ["-id"]
+
+#     def __str__(self):
+#         return self.title

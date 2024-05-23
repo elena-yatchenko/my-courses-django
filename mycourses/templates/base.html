@@ -39,7 +39,8 @@
                 {% block sidebar %}
                 <ul class="sidebar-nav">
                     {% if user.is_authenticated %}
-                    <li>User: {{ user.get_username }}</li>
+                    <!-- <li>User: {{ user.get_username }}</li> -->
+                    <li>User: {{ user.first_name }} {{ user.last_name }}</li>
                     <!-- <li><button type="button"><a href="/">Личный кабинет</a></button></li> -->
                     <li><a href="{% url 'logout' %}">Logout</a></li>
                     {% else %}

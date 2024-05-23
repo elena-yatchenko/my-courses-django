@@ -2,9 +2,9 @@
 
 {% block content %}
 <h1>Студент: {{ student.full_name }}</h1>
-{% if image %}
+{% if student.photo %}
 <p class="photo">
-    <img src="{{ image.image.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 80px;"
+    <img src="{{ student.photo.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 80px;"
         alt="Ваше фото">
 </p>
 {% endif %}

@@ -4,7 +4,7 @@ from .forms import RegisterUserForm, RegisterStudentForm, AddMarkForm, PaymentCh
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .models import Category, Course, Student, Payment, Review, Performance
-from .models import Image
+# from .models import image_storage
 from django.contrib.auth import logout, login
 from django.shortcuts import redirect
 from django.core.paginator import Paginator
@@ -109,11 +109,11 @@ def course_detail(request, id):
 def student_detail(request, id):
     student = Student.objects.filter(pk=id, is_deleted=False).first()
     payments = Payment.objects.filter(student=student)
-    image = Image.objects.filter(student=student).first()
+    # image = Image.objects.filter(student=student).first()
     return render(
         request,
         "students_app/student_detail.html",
-        context={"student": student, "payments": payments, "image": image},
+        context={"student": student, "payments": payments},
     )
 
 
@@ -130,7 +130,6 @@ def profile(request):
     students = current_user.student_set.all()
     stud_pay = {}
     for student in students:
-        print(student.image_set)
         # data = []
         # image = Image.objects.filter(student=student).first()
         # stud_image[student] = image
@@ -146,6 +145,10 @@ def profile(request):
         (иначе будет ошибка Object of type date is not JSON serializable),
        а для вывода на страницу, переводим обратно в строку"""
     request.session["visit_date"] = date.today().strftime('%Y-%m-%d')
+    print(date.today().strftime('%Y-%m-%d'))
+    print(request.session)
+    print(request.session['visit_date'])
+
     return render(
         request,
         "students_app/profile.html",
@@ -504,11 +507,14 @@ def add_photo(request, stud_id):
         image_form = AddImageForm(request.POST, request.FILES)
         if image_form.is_valid():
             image = image_form.cleaned_data["image"]
-            title = image.name
+            # title = image.name
+            # fs = FileSystemStorage(location="media/images/")
             fs = FileSystemStorage()
             fs.save(image.name, image)
-            my_image = Image(title=title, student=student, image=image)
-            my_image.save()
+            student.photo = image
+            # my_image = Image(title=title, student=student, image=image)
+            # my_image.save()
+            student.save()
             return redirect("profile")
     else:
         image_form = AddImageForm()
