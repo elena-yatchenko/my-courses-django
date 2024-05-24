@@ -39,7 +39,7 @@ class Course(models.Model):
     lasting = models.IntegerField(
         default=1, help_text="Продолжительность курса, в месяцах"
     )
-    is_selected = models.BooleanField(default=False)
+    # is_selected = models.BooleanField(default=False)
     cost = models.DecimalField(
         max_digits=8, decimal_places=2, help_text="Стоимость в месяц, азн"
     )
@@ -161,7 +161,7 @@ class Performance(models.Model):
 
 
 class Payment(models.Model):
-    """Model representing a payment for course"""
+    """Модель отражает оплаты студента"""
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     amount = models.DecimalField(
@@ -182,8 +182,7 @@ class Payment(models.Model):
 
 
 class Review(models.Model):
-    """Model representing a comment about course"""
-
+    """Модель отражает отзывы о курсах"""
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     text = models.TextField(

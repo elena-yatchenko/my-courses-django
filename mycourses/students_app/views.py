@@ -74,33 +74,43 @@ def students(request, status):
 
 
 def course_detail(request, id):
+    user = request.user
     course = Course.objects.filter(pk=id, is_deleted=False).first()
     students = course.student_set.filter(status="a", is_deleted=False)
     reviews = course.review_set.all()
     course.views_num += 1
     course.save()
-    if request.method == "POST":
-        review_form = AddReviewForm(request.POST)
-        if review_form.is_valid():
-            user = request.user
-            student = Student.objects.filter(related_user=user).first()
-            cd = review_form.cleaned_data
-            new_review = Review(
-                student=student, course=course, text=cd["text"], rate=cd["rate"]
-            )
-            new_review.save()
-            return redirect("course-detail", course.id)
-    else:
-        review_form = AddReviewForm()
-    return render(
-        request,
-        "students_app/course_detail.html",
-        context={
+    context = {
+        "course": course,
+        "students": students,
+        "reviews": reviews,
+    }
+    if user.is_authenticated and not user.is_staff:
+        if request.method == "POST":
+            review_form = AddReviewForm(request.POST)
+            if review_form.is_valid():
+                user = request.user
+                student = Student.objects.filter(related_user=user).first()
+                cd = review_form.cleaned_data
+                new_review = Review(
+                    student=student, course=course, text=cd["text"], rate=cd["rate"]
+                )
+                new_review.save()
+                return redirect("course-detail", course.id)
+            # else:
+            #     !!!Добавить логирование
+        else:
+            review_form = AddReviewForm()
+        context = {
             "course": course,
             "students": students,
             "reviews": reviews,
             "form": review_form,
-        },
+        }
+    return render(
+        request,
+        "students_app/course_detail.html",
+        context,
     )
 
 
@@ -117,8 +127,7 @@ def student_detail(request, id):
 
 def logout_view(request):
     logout(request)
-    return render(request, 'registration/logged_out.html')
-    # return redirect("/")  # на главную страницу сайта
+    return redirect("/")  # на главную страницу сайта
 
 
 @login_required
@@ -135,24 +144,30 @@ def profile(request):
         stud_pay[student] = payments
 
     visit_date = request.session.get("visit_date", None)
+    print(f'request - {request.session}')
+    print(f'visit date = {visit_date}')
+    print(type(visit_date))
     if visit_date is None:
-        visit_date = date.today()
+        visit_date_current = date.today()
     else:
-        visit_date = datetime.strptime(visit_date, '%Y-%m-%d')
-        """переводим дату во формат строки для добавления в сессии 
-        (иначе будет ошибка Object of type date is not JSON serializable),
-       а для вывода на страницу, переводим обратно в строку"""
-    request.session["visit_date"] = date.today().strftime('%Y-%m-%d')
-    print(date.today().strftime('%Y-%m-%d'))
-    print(request.session)
-    print(request.session['visit_date'])
+        visit_date_current = datetime.strptime(visit_date, '%Y-%m-%d')
+    print(type(visit_date_current))
+    print(visit_date_current)
+    """переводим дату во формат строки для добавления в сессии 
+    (иначе будет ошибка Object of type date is not JSON serializable),
+    а для вывода на страницу, переводим обратно в строку"""
+    visit_date_new = date.today().strftime('%Y-%m-%d')
+    request.session["visit_date"] = visit_date_new
+    print(f"перевод в строку - {visit_date_new}")
+    print(type(visit_date_new))
+    print(f'новая дата посещения в сессии - {request.session["visit_date"]}')
 
     return render(
         request,
         "students_app/profile.html",
         context={
             'stud_pay': stud_pay,
-            'visit_date': visit_date},
+            'visit_date': visit_date_current},
     )
     # return render(
     #     request,

@@ -14,8 +14,9 @@
 <p class="text-muted">Количество просмотров: {{ course.views_num }}</p>
 <button type="button"><a href="{% url 'student-request' course.id%}">Подать заявку</a></button>
 
-<!-- для авторизованных -->
+<!-- для авторизованных и НЕ сотрудников-->
 <h4 style="margin-top:20px"><strong>Отзывы</strong> ({{ reviews.count }})</h4>
+{% if user.is_authenticated and not user.is_staff %}
 <p><strong>Здесь вы можете добавить свой отзыв</strong></p>
 <div class="shadowbox">
     <form action="" method="post">
@@ -37,7 +38,7 @@
         <!-- <p><input type="submit" value="Подтвердить"></p> -->
     </form>
 </div>
-
+{% endif %}
 <hr>
 {% for review in reviews %}
 <p><strong>{{review.student.full_name}}</strong> Оценка курса: <b>{{ review.rate }}</b>.

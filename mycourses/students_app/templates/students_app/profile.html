@@ -3,8 +3,9 @@
 {% block content %}
 <h4>Личный кабинет пользователя: {{ user.first_name }} {{ user.last_name }}</h4>
 {% for student, payments in stud_pay.items %}
-<!-- <h3>Студент {{ student.full_name }}</h3> -->
+
 <h3>Курс: {{student.course }}</h3>
+<h4>Студент: {{ student.full_name }}</h4>
 
 {% if student.photo %}
 <p class="photo">
@@ -39,11 +40,29 @@
     <h4><strong>Данные оплаты</strong></h4>
     <br>
     <p class="text-success"><strong>Общая стоимость обучения: {{ student.course.total_cost}} азн</strong>
+    </p>
+    <p class="text-warning"><strong>Остаток для оплаты: {{ student.rest_of_payment}} азн</strong>
     </p><br>
     {% if payments %}
+    <p><b>ПЛАТЕЖИ</b></p>
     {% for payment in payments %}
-    <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
-    <p><strong>Сумма: </strong>{{ payment.amount }} азн</p>
+    <ol>
+        <li><strong>Сумма: </strong>{{ payment.amount }} азн
+            <ul>
+                <li>Дата:
+                    </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</li>
+                {% if payment.document %}
+                <li><strong>Документ, подтверждающий оплату: </strong>
+                    <a href="{{ payment.document.url }}">{{ payment.document.name }}</a>
+                </li>
+                {% else %}
+                <li class="text-danger" style='list-style-type:none'>(документ, подтверждающий оплату, отсутствует)</li>
+                {% endif %}
+            </ul>
+        </li>
+    </ol>
+    <!-- <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
+    <p><strong>Сумма: </strong>{{ payment.amount }} азн</p> -->
     {% endfor %}
     {% else %}<p>Нет зарегистрированных платежей</p>
     {% endif %}
