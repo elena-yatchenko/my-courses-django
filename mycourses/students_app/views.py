@@ -4,6 +4,7 @@ from .forms import RegisterUserForm, RegisterStudentForm, AddMarkForm, PaymentCh
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
 from .models import Category, Course, Student, Payment, Review, Performance
+
 # from .models import image_storage
 from django.contrib.auth import logout, login
 from django.shortcuts import redirect
@@ -68,8 +69,7 @@ def students(request, status):
     return render(
         request,
         "students_app/students_list.html",
-        context={"status": status, "page_obj": page_obj,
-                 "student_list": student_list},
+        context={"status": status, "page_obj": page_obj, "student_list": student_list},
     )
 
 
@@ -96,6 +96,8 @@ def course_detail(request, id):
                     student=student, course=course, text=cd["text"], rate=cd["rate"]
                 )
                 new_review.save()
+                course.rating = course.rating_count()
+                course.save()
                 return redirect("course-detail", course.id)
             # else:
             #     !!!Добавить логирование
@@ -144,19 +146,19 @@ def profile(request):
         stud_pay[student] = payments
 
     visit_date = request.session.get("visit_date", None)
-    print(f'request - {request.session}')
-    print(f'visit date = {visit_date}')
+    print(f"request - {request.session}")
+    print(f"visit date = {visit_date}")
     print(type(visit_date))
     if visit_date is None:
         visit_date_current = date.today()
     else:
-        visit_date_current = datetime.strptime(visit_date, '%Y-%m-%d')
+        visit_date_current = datetime.strptime(visit_date, "%Y-%m-%d")
     print(type(visit_date_current))
     print(visit_date_current)
     """переводим дату во формат строки для добавления в сессии 
     (иначе будет ошибка Object of type date is not JSON serializable),
     а для вывода на страницу, переводим обратно в строку"""
-    visit_date_new = date.today().strftime('%Y-%m-%d')
+    visit_date_new = date.today().strftime("%Y-%m-%d")
     request.session["visit_date"] = visit_date_new
     print(f"перевод в строку - {visit_date_new}")
     print(type(visit_date_new))
@@ -165,9 +167,7 @@ def profile(request):
     return render(
         request,
         "students_app/profile.html",
-        context={
-            'stud_pay': stud_pay,
-            'visit_date': visit_date_current},
+        context={"stud_pay": stud_pay, "visit_date": visit_date_current},
     )
     # return render(
     #     request,
@@ -228,7 +228,7 @@ def student_request(request, course_id):
                 cd = form.cleaned_data
                 name = cd["name"]
                 surname = cd["surname"]
-                email = cd['email']
+                email = cd["email"]
                 student = Student(
                     name=name,
                     surname=surname,
@@ -273,8 +273,8 @@ def student_update(request, stud_id):
             cd = form.cleaned_data
             name = cd["name"]
             surname = cd["surname"]
-            email = cd['email']
-            phone = cd['phone']
+            email = cd["email"]
+            phone = cd["phone"]
             student.name = name
             student.surname = surname
             student.phone = phone
@@ -290,8 +290,8 @@ def student_update(request, stud_id):
             initial={
                 "name": student.name,
                 "surname": student.surname,
-                'email': current_user.email,
-                'phone': student.phone,
+                "email": current_user.email,
+                "phone": student.phone,
             }
         )
         message = "Редактирование данных студента"
@@ -392,7 +392,7 @@ def payment_update(request, stud_id, pay_id):
             initial={
                 "student": student,
                 "amount": payment.amount,
-                'paid_date': payment.paid_date,
+                "paid_date": payment.paid_date,
             }
         )
         # payment_form.fields["student"].disabled = True
@@ -451,8 +451,7 @@ def student_archive(request, stud_id):
                 return redirect(back_url)
             else:
                 user = student.related_user
-                group_for_add, created = Group.objects.get_or_create(
-                    name="Archive")
+                group_for_add, created = Group.objects.get_or_create(name="Archive")
                 group_for_delete = Group.objects.get(name="Students")
                 user.groups.add(group_for_add)
                 user.groups.remove(group_for_delete)
@@ -489,7 +488,8 @@ def add_mark(request, course_id):
             student = cd["student"]
             date_of_mark = cd["date_of_mark"]
             performance = Performance(
-                student=student, mark=mark, date_of_mark=date_of_mark)
+                student=student, mark=mark, date_of_mark=date_of_mark
+            )
             performance.save()
             message = f"Оценка для студента {student.full_name} добавлена успешно."
             add_form = AddMarkForm()

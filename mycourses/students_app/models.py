@@ -15,9 +15,16 @@ class Category(models.Model):
 
     name = models.CharField(
         max_length=100,
+        verbose_name="Наименование",
         help_text="Категория курса (e.g. 1C - ИТ, 1C - Консалтинг)",
     )
-    flag = models.CharField(max_length=10, default="cons")
+    flag = models.CharField(
+        max_length=10,
+        verbose_name="Сокращение",
+        default="nonamed",
+        help_text="Только латинские символы в нижнем регистре, БЕЗ пробелов",
+        unique=True,
+    )
 
     class Meta:
         # ordering = ["name"]
@@ -32,10 +39,8 @@ class Course(models.Model):
     """Model representing a course"""
 
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(
-        Category, on_delete=models.SET_NULL, null=True)
-    summary = models.TextField(
-        max_length=1000, help_text="Краткое описание курса")
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    summary = models.TextField(max_length=1000, help_text="Краткое описание курса")
     lasting = models.IntegerField(
         default=1, help_text="Продолжительность курса, в месяцах"
     )
@@ -44,8 +49,7 @@ class Course(models.Model):
         max_digits=8, decimal_places=2, help_text="Стоимость в месяц, азн"
     )
     added = models.DateField(auto_now_add=True)
-    rating = models.DecimalField(
-        max_digits=3, decimal_places=2, blank=True, null=True)
+    rating = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
     deleted = models.DateField(auto_now=True)
     views_num = models.IntegerField(default=0)
@@ -81,7 +85,7 @@ class Student(models.Model):
     phone = models.CharField(verbose_name="Номер телефона", max_length=50)
     date_of_birth = models.DateField()
     course = models.ForeignKey(Course, on_delete=models.PROTECT)
-    photo = models.ImageField(upload_to='images/', blank=True, null=True)
+    photo = models.ImageField(upload_to="images/", blank=True, null=True)
 
     @property
     def full_name(self):
@@ -164,10 +168,8 @@ class Payment(models.Model):
     """Модель отражает оплаты студента"""
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    amount = models.DecimalField(
-        verbose_name="Сумма", max_digits=8, decimal_places=2)
-    paid_date = models.DateField(
-        verbose_name="Дата оплаты", default=date.today)
+    amount = models.DecimalField(verbose_name="Сумма", max_digits=8, decimal_places=2)
+    paid_date = models.DateField(verbose_name="Дата оплаты", default=date.today)
     document = models.FileField(upload_to="files/", null=True, blank=True)
     added = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
@@ -183,6 +185,7 @@ class Payment(models.Model):
 
 class Review(models.Model):
     """Модель отражает отзывы о курсах"""
+
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     text = models.TextField(
