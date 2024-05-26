@@ -10,7 +10,7 @@
 
 body {
   margin: 0;
-  background: #f2f2f2;
+  background: rgb(255, 254, 210);
 }
 
 header {
@@ -117,7 +117,7 @@ nav ul {
 }
 
 #radio_rate {
-  font-size: 25px;
+  font-size: 20px;
   color: #312d2d;
   align-items: center;
   padding: 5px 15px 15px 5px;
@@ -125,45 +125,6 @@ nav ul {
   justify-content: space-between;
 }
 
-/* 
-.form_radio_btn {
-  display: inline-block;
-  margin-right: 10px;
-} */
-
-/* #radio_rate {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-} */
-/* 
-.form_radio_btn input[type=radio] {
-  display: none;
-}
-
-.form_radio_btn label {
-  display: inline-block;
-  cursor: pointer;
-  padding: 0px 15px;
-  line-height: 34px;
-  border: 1px solid #999;
-  border-radius: 6px;
-  user-select: none;
-} */
-
-/* Checked
-.form_radio_btn input[type=radio]:checked+label {
-  background: #ffe0a6;
-}
-
-/* Hover */
-/* .form_radio_btn label:hover {
-  color: #666;
-} */
-
-/* Disabled */
-/* .form_radio_btn input[type=radio]:disabled+label {
-  background: #efefef;
-  color: #666;
-} */
+/* https://itproger.com/course/django/5 
+https://getbootstrap.com/docs/5.3/forms/checks-radios/
+*/

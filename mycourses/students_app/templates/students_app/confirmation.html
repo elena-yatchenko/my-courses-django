@@ -7,11 +7,13 @@
 
 
 <div class="shadowbox">
-    <form action="" method="post">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <p><button type="submit"><strong>Подтвердить выбор</strong></button></p>
-        <!-- <p><input type="submit" value="Подтвердить"></p> -->
-    </form>
+    <div class="form-check">
+        <form action="" method=" post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <p><button type="submit"><strong>Подтвердить выбор</strong></button></p>
+            <!-- <p><input type="submit" value="Подтвердить"></p> -->
+        </form>
+    </div>
 </div>
 {% endblock %}

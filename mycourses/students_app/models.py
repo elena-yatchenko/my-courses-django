@@ -142,7 +142,7 @@ class Student(models.Model):
         return reverse("student-detail", args=[str(self.id)])
 
     def __str__(self):
-        return f"{self.name}, {self.surname}"
+        return f"{self.full_name}"
 
 
 class Performance(models.Model):

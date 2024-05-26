@@ -23,9 +23,9 @@
         <!-- {{ form.as_p }} -->
         <p>{{ form.text }}</p>
         <p><b>Оцените курс</b></p>
-        <fieldset id="radio_rate">
+        <fieldset class="row row-cols-lg-auto g-3 align-items-center" id="radio_rate">
             {% for radio in form.rate %}
-            <label for="{{ radio.id_for_label }}">
+            <label class="btn btn-secondary" for="{{ radio.id_for_label }}">
                 {{ radio.choice_label }}
                 <span>{{ radio.tag }}</span>
             </label>

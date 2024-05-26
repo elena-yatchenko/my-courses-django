@@ -46,15 +46,16 @@ class RegisterStudentForm(forms.Form):
         ),
         help_text="Номер телефона должен начинаться со знака '+', далее код страны и номер",
     )
-    email = forms.EmailField(widget=forms.EmailInput(
-        attrs={"class": "form-control", "placeholder": "examlple@mail.ru"}),
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-control", "placeholder": "examlple@mail.ru"}
+        ),
         help_text="Обратите внимание, что при изменении данного поля изменяется email, указанный при регистрации",
     )
 
     date_of_birth = forms.DateField(
         initial=date.today(),
-        widget=forms.DateInput(
-            attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
     # course = forms.ModelChoiceField(label="Курс", queryset=Course.objects.all())
 
@@ -65,7 +66,7 @@ class PaymentForm(forms.Form):
     student = forms.ModelChoiceField(
         label="Студент",
         queryset=Student.objects.all(),
-        widget=forms.Select(attrs={"class": "form-check-input"}),
+        widget=forms.Select(attrs={"class": "form-floating"}),
     )
     amount = forms.DecimalField(
         label="Сумма оплаты",
@@ -76,14 +77,13 @@ class PaymentForm(forms.Form):
     paid_date = forms.DateField(
         label="Дата оплаты",
         initial=date.today(),
-        widget=forms.DateInput(
-            attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
     document = forms.FileField(
         required=False,
         widget=forms.FileInput(
             attrs={
-                "class": "form-control",
+                "class": "form-select",
                 "placeholder": "Загрузите документ об оплате",
             }
         ),
@@ -102,8 +102,7 @@ class PaymentForm(forms.Form):
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]
         if paid_date > date.today():
-            raise forms.ValidationError(
-                "Дата оплаты не может быть больше текущей даты")
+            raise forms.ValidationError("Дата оплаты не может быть больше текущей даты")
         return paid_date
 
 
@@ -114,8 +113,8 @@ class PaymentChangeForm(forms.Form):
         label="Студент",
         disabled=True,
         queryset=Student.objects.all(),
-        widget=forms.Select(attrs={"class": "form-check-input"}),
-        required=False
+        widget=forms.Select(attrs={"class": "form-floating"}),
+        required=False,
     )
     amount = forms.DecimalField(
         label="Сумма оплаты",
@@ -126,8 +125,7 @@ class PaymentChangeForm(forms.Form):
     paid_date = forms.DateField(
         label="Дата оплаты",
         initial=date.today(),
-        widget=forms.DateInput(
-            attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
     document = forms.FileField(
         required=False,
@@ -142,8 +140,7 @@ class PaymentChangeForm(forms.Form):
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]
         if paid_date > date.today():
-            raise forms.ValidationError(
-                "Дата оплаты не может быть больше текущей даты")
+            raise forms.ValidationError("Дата оплаты не может быть больше текущей даты")
         return paid_date
 
 
@@ -151,7 +148,7 @@ class ConfirmationForm(forms.Form):
     YES_NO_CHOICES = [(True, "Принять"), (False, "Отклонить")]
     confirm_choice = forms.ChoiceField(
         label="",
-        widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
+        widget=forms.RadioSelect(attrs={"class": "form-check"}),
         choices=YES_NO_CHOICES,
         required=True,
     )
@@ -180,6 +177,11 @@ class AddReviewForm(forms.Form):
         choices=RATES,
         required=True,
     )
+    # rate = forms.ChoiceField(
+    #     widget=forms.RadioSelect(attrs={"class": "btn-check", "type": "radio"}),
+    #     choices=RATES,
+    #     required=True,
+    # )
 
 
 class AddMarkForm(forms.Form):
@@ -208,8 +210,7 @@ class AddMarkForm(forms.Form):
     date_of_mark = forms.DateField(
         label="Дата",
         initial=date.today(),
-        widget=forms.DateInput(
-            attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
     )
 
     # def __init__(self, course, *args, **kwargs):
