@@ -158,6 +158,7 @@ class Performance(models.Model):
     mark = models.IntegerField(choices=MARKS)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     date_of_mark = models.DateField(default=timezone.now())
+    added = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
 
     def __str__(self):
@@ -208,7 +209,7 @@ class Review(models.Model):
 
     def get_summary(self):
         words = self.text.split()
-        return f'{" ".join(words[:12])}...'
+        return f'{" ".join(words[:8])}...'
 
     def __str__(self):
         return f"{self.rate}"

@@ -112,24 +112,19 @@ class CourseAdmin(admin.ModelAdmin):
 class PerformanceInline(admin.TabularInline):
     model = Performance
     extra = 0
-    # fields = [
-    #     "surname",
-    #     "name",
-    #     "status",
-    #     "is_paid",
-    #     "rest_of_payment",
-    #     "reg_date",
-    #     "is_deleted",
-    # ]
-    # readonly_fields = ["rest_of_payment", "is_paid"]
-    # extra = 0
-    # ordering = ["status"]
+    fields = [
+        "mark",
+        "date_of_mark",
+    ]
+    # radio_fields = {"mark": admin.HORIZONTAL}
+    ordering = ["-date_of_mark"]
 
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
     list_display = [
         "full_name",
+        "pk",
         "course",
         "status",
         "average_mark",
@@ -138,7 +133,7 @@ class StudentAdmin(admin.ModelAdmin):
         "related_user",
     ]
     radio_fields = {"status": admin.HORIZONTAL}
-    ordering = ["surname", "status"]
+    ordering = ["status", "pk"]
     list_per_page = 7
     search_fields = ["surname", "name"]
     list_filter = ["is_deleted", "status", "course"]
@@ -186,57 +181,76 @@ class StudentAdmin(admin.ModelAdmin):
     ]
 
 
-# class ProductAdmin(admin.ModelAdmin):
-#     list_display = ["pk", "name", "price", "quantity", "describe"]
-#     # actions = [filter_price, zero_quantity]
-#     ordering = ["quantity", "name"]
-#     list_per_page = 10
-#     search_fields = ["describe"]
-#     list_filter = ["added", "describe"]  # например, отфильтровать high cost продукты
+@admin.register(Payment)
+class PaymentAdmin(admin.ModelAdmin):
+    list_display = [
+        "student",
+        "paid_date",
+        "amount",
+    ]
+    ordering = ["student"]
+    list_per_page = 10
+    # search_fields = ["student"]
+    list_filter = ["paid_date"]
+
+    readonly_fields = ["added", "updated"]
 
 
-#     readonly_fields = ["added", "updated"]
-#     fieldsets = [
-#         (
-#             "Товар",
-#             {
-#                 "classes": ["wide"],
-#                 "fields": ["name"],
-#             },
-#         ),
-#         (
-#             "Описание",
-#             {
-#                 "classes": ["collapse"],
-#                 "description": "Описание товара",
-#                 "fields": ["describe"],
-#             },
-#         ),
-#         (
-#             "Данные для реализации",
-#             {
-#                 "fields": ["price", "quantity"],
-#             },
-#         ),
-#         (
-#             "Прочее",
-#             {
-#                 "classes": ["collapse"],
-#                 "fields": ["added", "updated"],
-#             },
-#         ),
-#     ]
+@admin.register(Performance)
+class PerformanceAdmin(admin.ModelAdmin):
+    list_display = [
+        "mark",
+        "student",
+        "date_of_mark",
+    ]
+    ordering = ["student"]
+    list_per_page = 10
+    search_fields = ["mark"]
+    list_filter = ["date_of_mark", "student"]
+
+    readonly_fields = ["added", "updated"]
 
 
 @admin.register(Review)
-class BookAdmin(admin.ModelAdmin):
-    pass
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = [
+        "course",
+        "rate",
+        "get_summary",
+    ]
+    ordering = ["course", "-added"]
+    list_per_page = 10
+    search_fields = ["rate"]
+    list_filter = ["course", "added"]
+
+    readonly_fields = ["added", "rate", "text"]
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": ["rate", "course"],
+            },
+        ),
+        (
+            "Комментарий",
+            {
+                "classes": ["collapse"],
+                "fields": ["text"],
+            },
+        ),
+        (
+            "Прочее",
+            {
+                "fields": ["added"],
+            },
+        ),
+    ]
 
 
 # admin.site.register(Category, CategoryAdmin)
 # admin.site.register(Course)
-admin.site.register(Performance)
+# admin.site.register(Performance)
 # admin.site.register(Student)
-admin.site.register(Payment)
+# admin.site.register(Payment)
 # admin.site.register(Image)
 # admin.site.register(Review)
