@@ -45,8 +45,9 @@
     </p><br>
     {% if payments %}
     <p><b>ПЛАТЕЖИ</b></p>
-    {% for payment in payments %}
     <ol>
+        {% for payment in payments %}
+
         <li><strong>Сумма: </strong>{{ payment.amount }} азн
             <ul>
                 <li><strong>Дата:</strong>{{ payment.paid_date|date:"d.m.Y" }} г.</li>
@@ -59,10 +60,11 @@
                 {% endif %}
             </ul>
         </li>
-    </ol>
-    <!-- <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
+
+        <!-- <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
     <p><strong>Сумма: </strong>{{ payment.amount }} азн</p> -->
-    {% endfor %}
+        {% endfor %}
+    </ol>
     {% else %}<p>Нет зарегистрированных платежей</p>
     {% endif %}
 </div>

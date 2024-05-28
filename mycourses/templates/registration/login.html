@@ -14,26 +14,28 @@
 {% endif %}
 {% endif %}
 
-<form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <table>
+<div class="shadowbox">
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        <table>
 
-        <tr>
-            <td>{{ form.username.label_tag }}</td>
-            <td>{{ form.username }}</td>
-        </tr>
+            <tr>
+                <td>{{ form.username.label_tag }}</td>
+                <td class="form-control">{{ form.username }}</td>
+            </tr>
 
-        <tr>
-            <td>{{ form.password.label_tag }}</td>
-            <td>{{ form.password }}</td>
-        </tr>
-    </table>
+            <tr>
+                <td>{{ form.password.label_tag }}</td>
+                <td class="form-control">{{ form.password }}</td>
+            </tr>
+        </table>
 
-    <input type="submit" value="login" />
-    <input type="hidden" name="next" value="{{ next }}" />
-</form>
+        <input type="submit" value="login" />
+        <input type="hidden" name="next" value="{{ next }}" />
+    </form>
+</div>
 
-<p>У вас еще нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+<p style="margin-top:20px">У вас еще нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
 <!-- {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p> -->
 

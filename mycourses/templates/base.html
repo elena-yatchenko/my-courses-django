@@ -6,18 +6,25 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+    <!-- <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css"
+        integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous"
+        aria-hidden="true"> -->
+    <!-- <link rel="stylesheet" aria-hidden="true"
+        href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" /> -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css">
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" /> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <!-- Добавление дополнительного статического CSS файла -->
-
     <link rel="stylesheet" href="{% static 'students_app/css/styles.css' %}" />
 </head>
 
 <body>
     <header>
-        <a href="" class="logo">Лого</a>
+        <!-- <span class="logo">Лого</span> -->
         <nav>
             <ul class="topmenu">
                 <li><a href="/">Главная</a></li>
@@ -38,34 +45,40 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-2">
-                {% block sidebar %}
-                <ul class="sidebar-nav">
-                    {% if user.is_authenticated %}
-                    <!-- <li>User: {{ user.get_username }}</li> -->
-                    <li>User: {{ user.first_name }} {{ user.last_name }}</li>
-                    <!-- <li><button type="button"><a href="/">Личный кабинет</a></button></li> -->
-                    <li><a href="{% url 'logout' %}">Logout</a></li>
-                    {% else %}
-                    <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
+                <!-- {% block sidebar %} -->
+                <aside style="margin-top:20px">
+                    <img src="{% static 'students_app/images/logo_img.png' %}" alt="logo">
+                    <h5 class="sidebar-nav"><i class="fas fa-user"></i> Вход/Выход</h5>
+                    <ul class="sidebar-nav">
+                        {% if user.is_authenticated %}
+                        <!-- <li>User: {{ user.get_username }}</li> -->
+                        <li>Пользователь</li>
+                        <li>{{ user.first_name }} {{ user.last_name }}</li>
+                        <!-- <li><button type="button"><a href="/">Личный кабинет</a></button></li> -->
+                        <li><a href="{% url 'logout' %}">Logout</a></li>
+                        {% else %}
+                        <li><a href="{% url 'login' %}?next={{request.path}}">Login</a></li>
+                        {% endif %}
+                    </ul>
+                    {% if user.is_staff %}
+                    <h5 class="sidebar-nav"><i class="fas fa-graduation-cap"></i> Обучение</h5>
+                    <ul class="sidebar-nav">
+                        <li><a href="{% url 'students' status='r' %}">Заявки на обучение</a>{% if request_number %}
+                            ({{ request_number }}){% endif %}</li>
+                        <li><a href="{% url 'students' status='a' %}">Студенты</a></li>
+                        <li><a href="{% url 'students' status='f' %}">Архив</a></li>
+                    </ul>
+                    {% if perms.students_app.add_payment and perms.students_app.change_payment %}
+                    <h5 class="sidebar-nav"><i class="fas fa-money-bill-1-wave"></i> Оплата</h5>
+                    <ul class="sidebar-nav">
+                        <li><a href="{% url 'student-payment' %}">Добавить платеж</a></li>
+                    </ul>
                     {% endif %}
-                </ul>
-                {% if user.is_staff %}
-                <ul class="sidebar-nav">
-                    <li><a href="{% url 'students' status='r' %}">Заявки на обучение</a>{% if request_number %}
-                        ({{ request_number }}){% endif %}</li>
-                    <li><a href="{% url 'students' status='a' %}">Студенты</a></li>
-                    <li><a href="{% url 'students' status='f' %}">Архив</a></li>
-                </ul>
-                {% if perms.students_app.add_payment and perms.students_app.change_payment %}
-                <ul class="sidebar-nav">
-                    <li><a href="{% url 'student-payment' %}">Оплата</a></li>
-                </ul>
-                {% endif %}
-                {% endif %}
-
-                {% endblock %}
+                    {% endif %}
+                </aside>
+                <!-- {% endblock %} -->
             </div>
-            <div class="col-sm-10 ">{% block content %}{% endblock %}
+            <div class="col-sm-10">{% block content %}{% endblock %}
 
                 <p>{% block pagination %}{% endblock %}</p>
             </div>
