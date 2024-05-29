@@ -2,6 +2,8 @@
   margin-top: 20px;
   padding-left: 20px;
   list-style: none;
+  color: rgb(71, 80, 82);
+  display: block;
 }
 
 * {
@@ -10,12 +12,13 @@
 
 body {
   margin: 20;
-  background: rgb(243 243 232);
+  background-color: #efefef;
 }
 
 header {
   background: rgb(255 255 255);
   text-align: center;
+  border: 5px solid rgb(183, 186, 187);
 }
 
 header a {
@@ -30,6 +33,62 @@ header a {
   font-family: 'Playfair Display', serif;
   font-size: 2.5em;
   padding: 20px 0;
+}
+
+aside {
+  margin-top: 20px;
+  background: rgb(255 255 255);
+  padding-bottom: 20;
+  border: 5px solid rgb(183, 186, 187);
+  height: 100vh;
+}
+
+/* для текста пример*/
+/* aside .text {
+  font-size: 20px;
+  margin-left: 10px;
+  font-weight: bold;
+  position: relative;
+  top: -5px;
+}
+
+aside h3 {
+  margin-top: 50px;
+  font-size: 25px;
+} */
+
+aside ul li {
+  color: rgb(6, 102, 102);
+  display: block;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+aside a {
+  display: block;
+  transition: all .3s ease;
+}
+
+aside a:hover {
+  color: #ad1c09;
+  text-decoration: none;
+  transform: scale(1.1);
+}
+
+/* aside {
+  float: left;
+  background: rgb(255 255 255);
+  width: 20%;
+  padding: 2.5%;
+  height: 100vh;
+  color: #404040;
+  border-right: 5px solid #404040;
+} */
+
+.content {
+  margin-top: 20px;
+  background-color: rgb(255 255 255);
+  padding: 40;
 }
 
 nav {
@@ -64,7 +123,7 @@ nav ul {
   font-size: 20px;
   font-weight: bold;
   color: #404040;
-  padding: 15px 30px;
+  padding: 15px 40px;
 }
 
 .topmenu li a:hover {
