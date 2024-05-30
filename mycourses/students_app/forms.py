@@ -55,7 +55,8 @@ class RegisterStudentForm(forms.Form):
 
     date_of_birth = forms.DateField(
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     # course = forms.ModelChoiceField(label="Курс", queryset=Course.objects.all())
 
@@ -77,7 +78,8 @@ class PaymentForm(forms.Form):
     paid_date = forms.DateField(
         label="Дата оплаты",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     document = forms.FileField(
         required=False,
@@ -102,7 +104,8 @@ class PaymentForm(forms.Form):
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]
         if paid_date > date.today():
-            raise forms.ValidationError("Дата оплаты не может быть больше текущей даты")
+            raise forms.ValidationError(
+                "Дата оплаты не может быть больше текущей даты")
         return paid_date
 
 
@@ -125,7 +128,8 @@ class PaymentChangeForm(forms.Form):
     paid_date = forms.DateField(
         label="Дата оплаты",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     document = forms.FileField(
         required=False,
@@ -140,7 +144,8 @@ class PaymentChangeForm(forms.Form):
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]
         if paid_date > date.today():
-            raise forms.ValidationError("Дата оплаты не может быть больше текущей даты")
+            raise forms.ValidationError(
+                "Дата оплаты не может быть больше текущей даты")
         return paid_date
 
 
@@ -148,7 +153,8 @@ class ConfirmationForm(forms.Form):
     YES_NO_CHOICES = [(True, "Принять"), (False, "Отклонить")]
     confirm_choice = forms.ChoiceField(
         label="",
-        widget=forms.RadioSelect(attrs={"class": "form-check"}),
+        widget=forms.RadioSelect(
+            attrs={"class": "checkbox inline"}),
         choices=YES_NO_CHOICES,
         required=True,
     )
@@ -210,7 +216,8 @@ class AddMarkForm(forms.Form):
     date_of_mark = forms.DateField(
         label="Дата",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
 
     # def __init__(self, course, *args, **kwargs):

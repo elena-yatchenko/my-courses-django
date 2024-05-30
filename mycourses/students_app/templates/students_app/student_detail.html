@@ -2,6 +2,7 @@
 
 {% block content %}
 <h1>Студент: {{ student.full_name }}</h1>
+<hr>
 {% if student.photo %}
 <p class="photo">
     <img src="{{ student.photo.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 80px;"
@@ -12,10 +13,10 @@
 <p><strong>E-mail:</strong> {{student.related_user.email}}</p>
 <p><strong>Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}} г.</p>
 {% if student.status == 'r' %}
-<br>
+<hr>
 <p><strong>Дата подачи заявки:</strong> {{student.request_date|date:"d.m.Y"}} г.</p>
-<button type="button"><a href="{% url 'student-approve' student.pk %}?next={{request.path}}">
-        Обработать заявку</a></button>
+<a class="btn btn-success left-20" href="{% url 'student-approve' student.pk %}?next={{request.path}}">Обработать
+    заявку</a>
 {% else %}
 <div style="margin-top:20px; margin-bottom:20px;">
     <p><strong>Курс:</strong> {{student.course }}</p>
@@ -28,12 +29,23 @@
 </div>
 {% endif %}
 <hr>
-<p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
-    Статус оплаты: {% if student.is_paid %}Оплачено полностью
-    {% elif not payments %}Оплаты нет
-    {% else %}Оплачено частично{% endif %}</p>
+<!-- <p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}"> -->
+<h5>Статус оплаты:</h5>
+{% if student.is_paid %}
+<!-- <button class="btn btn-large btn-block btn-success" type="button">Оплачено полностью</button> -->
+<p class="text-success"><strong>Оплачено полностью</strong></p>
+{% else %}
+{% if not payments %}
+<p class="text-danger"><strong>Оплаты нет</strong></p>
+<!-- <button class="btn btn-large btn-block btn-danger" type="button">Оплаты нет</button> -->
+{% else %}
+<p class="text-warning"><strong>Оплачено частично</strong></p>
+<!-- <button class="btn btn-large btn-block btn-warning" type="button">Оплачено частично</button> -->
+{% endif %}
+
 {% if perms.students_app.add_payment and perms.students_app.change_payment %}
-<p><a href="{% url 'student-payment' student.id  %}">Добавить данные по оплате</a></p>
+<p><a class="btn btn-success" href="{% url 'student-payment' student.id  %}">Добавить данные по оплате</a></p>
+{% endif %}
 {% endif %}
 <hr>
 <div style="margin-left:20px;margin-top:20px">

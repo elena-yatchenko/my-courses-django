@@ -1,41 +1,46 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h1>Категория: {{ category.name }}</h1>
+<div class="content">
+    {% block content %}
+    <h1>Категория: {{ category.name }}</h1>
 
-{% if page_obj %}
-<ul>
+    {% if page_obj %}
+    <ul>
 
-    {% for course in page_obj %}
-    <hr>
-    <li>
-        <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
-        {% if user.is_staff %}
-        <button type="button"><a href="{% url 'add-mark' course.id %}?next={{request.path}}">
-                Добавить оценки по курсу</a></button>
-        {% endif %}
-        <br>Продолжительность: {{course.lasting }} мес.
-    </li>
-    {% endfor %}
+        {% for course in page_obj %}
+        <hr>
+        <li>
+            <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
+            {% if user.is_staff %}
+            <a class="btn btn-success left-20" href="{% url 'add-mark' course.id %}?next={{request.path}}">
+                Добавить оценки по курсу</a>
 
-</ul>
-{% else %}
-<p>Курсы выбранной категории пока не доступны. Мы работаем над тем, чтобы они появились в нашей программе обучения как
-    можно скорее.</p>
-{% endif %}
-{% endblock %}
-{% block pagination %}
+
+            {% endif %}
+            <br>Продолжительность: {{course.lasting }} мес.
+        </li>
+        {% endfor %}
+
+    </ul>
+    {% else %}
+    <p>Курсы выбранной категории пока не доступны. Мы работаем над тем, чтобы они появились в нашей программе обучения
+        как
+        можно скорее.</p>
+    {% endif %}
+    {% endblock %}
+</div>
 <div class="pagination">
+    {% block pagination %}
     <span class="page-links">
         {% if page_obj.has_previous %}
-        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">previous</a>
+        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Предыдущая</a>
         {% endif %}
         <span class="page-current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
         </span>
         {% if page_obj.has_next %}
-        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">next</a>
+        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">Следующая</a>
         {% endif %}
     </span>
+    {% endblock %}
 </div>
-{% endblock %}

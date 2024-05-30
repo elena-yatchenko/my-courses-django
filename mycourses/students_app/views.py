@@ -406,7 +406,6 @@ def payment_update(request, stud_id, pay_id):
 
 
 @staff_member_required
-# @permission_required("is_staff")
 def student_approve(request, stud_id):
     # back_url = request.path
     back_url = request.GET["next"]

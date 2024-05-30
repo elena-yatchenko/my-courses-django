@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Подтверждение заявки на обучение{% endblock %}
+<div class="content">
+    {% block content %}
+    <h2 class="">{{ message }} <br><strong>{{ student.full_name }}</strong></h2><br>
 
-{% block content %}
-<h2 class="">{{ message }} <strong>{{ student.full_name }}</strong></h2><br>
 
-
-<div class="shadowbox">
-    <div class="form-check">
-        <form action="" method=" post">
-            {{ form.as_p }}
-            {% csrf_token %}
-            <p><button type="submit"><strong>Подтвердить выбор</strong></button></p>
-            <!-- <p><input type="submit" value="Подтвердить"></p> -->
-        </form>
+    <div class="shadowbox">
+        <div class="form-check">
+            <form action="" method="post">
+                {{ form.as_p }}
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Подтвердить выбор</button>
+                <!-- <p><input type="submit" value="Подтвердить"></p> -->
+            </form>
+        </div>
     </div>
+    {% endblock %}
 </div>
-{% endblock %}

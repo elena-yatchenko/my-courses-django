@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
+
 {% block content %}
 <h4>Личный кабинет пользователя: {{ user.first_name }} {{ user.last_name }}</h4>
 {% for student, payments in stud_pay.items %}

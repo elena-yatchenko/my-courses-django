@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}Регистрация оплаты{% endblock %}
+<div class="content">
+    {% block content %}
+    <h1>Регистрация оплаты студента</h1>
+    <h4 class="{% if form.errors %}text-danger{% else %}text-success{% endif %}">{{ message }}</h4>
 
-
-{% block content %}
-<h1>Регистрация оплаты студента</h1>
-<h4 class="{% if form.errors %}text-danger{% else %}text-success{% endif %}">{{ message }}</h4>
-
-<div class="shadowbox">
-    <form action="" method="post" enctype="multipart/form-data">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <p><button type="submit"><strong>Подтвердить</strong></button>
-            <button type="reset"><strong>Очистить данные</strong></button>
-        </p>
-        <!-- <p><input type="submit" value="Подтвердить"></p> -->
-    </form>
+    <div class="shadowbox">
+        <form action="" method="post" enctype="multipart/form-data">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success"><strong>Подтвердить</strong></button>
+                <button type="reset" class="btn btn-danger"><strong>Очистить данные</strong></button>
+            </div>
+            <!-- <p><input type="submit" value="Подтвердить"></p> -->
+        </form>
+    </div>
+    {% endblock %}
 </div>
-{% endblock %}

@@ -1,19 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Студент{% endblock %}
+<div class="content">
+    {% block content %}
+    <h1>{{ message }}</h1>
 
-
-{% block content %}
-<h1>{{ message }}</h1>
-
-<div class="shadowbox">
-    <form action="" method="post">
-        {{ form.as_p }}
-        {% csrf_token %}
-        <!-- <p><input type="submit" value="Создать заявку"></p> -->
-        <p><button type="submit"><strong>Подтвердить</strong></button>
-            <button type="reset"><strong>Очистить данные</strong></button>
-        </p>
-    </form>
+    <div class="shadowbox">
+        <form action="" method="post">
+            {{ form.as_p }}
+            {% csrf_token %}
+            <!-- <p><input type="submit" value="Создать заявку"></p> -->
+            <p><button type="submit"><strong>Подтвердить</strong></button>
+                <button type="reset"><strong>Очистить данные</strong></button>
+            </p>
+        </form>
+    </div>
+    {% endblock %}
 </div>
-{% endblock %}
