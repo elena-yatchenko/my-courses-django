@@ -1,5 +1,5 @@
 .sidebar-nav {
-  margin-top: 20px;
+  margin-top: 35px;
   padding-left: 20px;
   list-style: none;
   color: rgb(71, 80, 82);
@@ -20,17 +20,21 @@ body h2 {
   text-align: center;
 }
 
-h1 {
-  color: rgb(43, 84, 80)
+h1,
+h3,
+h4,
+h5 {
+  color: rgb(89, 11, 134);
 }
 
 h2 {
-  color: rgb(58, 134, 127)
+  color: rgb(137, 127, 144);
+  -webkit-text-stroke: 0.5px rgb(45, 2, 69);
 }
 
 body p {
   max-width: 800px;
-  margin: 20px auto 20px 20px;
+  margin: 10px auto 10px 20px;
 }
 
 header {
@@ -87,17 +91,82 @@ aside h3 {
 } */
 
 aside ul li {
-  color: #530240;
+  color: #530856;
   display: block;
-  margin-top: 20px;
+  margin-top: 10px;
+  font-family: 'Open Sans', sans-serif;
   font-weight: bold;
-  -webkit-text-stroke: 0.5px #f81d1d;
+  /* -webkit-text-stroke: 0.5px #f81d1d; */
+}
+
+
+.mine-block {
+  display: block;
+  background: linear-gradient(to bottom right, white, rgb(250, 247, 248), rgb(254, 244, 244));
+  border: 1px solid rgb(183, 186, 187);
+  border-radius: 9px;
+
+}
+
+.mine-bl-pos {
+  padding: 10px auto 10px 15px;
+}
+
+.block-text {
+  position: relative;
+  padding: 20px;
+}
+
+.review-div {
+  display: block;
+  position: relative;
+  margin: 15px auto;
+}
+
+.rev-p {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.rev-line {
+  font-size: 14px;
+  padding-left: 20px;
+}
+
+.mark-line {
+  font-size: 15px;
+  font-family: 'Open Sans', sans-serif;
+  padding-left: 20px;
+}
+
+.title {
+  font-size: 25px;
+  font-weight: bold;
+  font-family: 'Open Sans', sans-serif;
+  color: rgb(153 0 62);
+}
+
+.mine-ref {
+  color: rgb(96, 81, 104);
+  /* text-decoration: none; */
+}
+
+.course-list {
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.mine-ref:hover {
+  color: #a5aae9;
+  text-decoration: none;
+  /* transform: scale(1.1); */
 }
 
 aside a {
   display: block;
+  font-family: 'Open Sans', sans-serif;
   transition: transform .3s ease;
-  color: rgb(98, 29, 29);
+  color: rgb(153 0 62);
 }
 
 .no-decor {
@@ -105,19 +174,22 @@ aside a {
 }
 
 aside a:hover {
-  color: #cd9955;
+  color: rebeccapurple;
   text-decoration: none;
   transform: scale(1.1);
 }
 
 .student {
   font-weight: bold;
+  font-size: 15px;
+  font-family: 'Open Sans', sans-serif;
+  text-decoration: none;
 }
 
 .student:hover {
   font-size: larger;
-  color: #cd9955;
-  text-decoration: none;
+  color: #f31919;
+
 }
 
 .m-10 {
@@ -125,8 +197,28 @@ aside a:hover {
   font-size: 15px;
 }
 
-.left-20 {
+.m-top-20 {
+  margin-top: 20px;
+}
+
+.bottom-ref-left {
   margin-left: 20px;
+}
+
+.bottom-ref-left-top {
+  margin-left: 20px;
+  top: 20px;
+}
+
+.icons {
+  font-size: 25px;
+}
+
+.icons-text {
+  padding-left: 20px;
+  color: rgb(60, 3, 94);
+  font-weight: bold;
+  font-size: 18px;
 }
 
 /* aside {
@@ -142,11 +234,46 @@ aside a:hover {
 .content {
   margin: 20 auto;
   padding: 40;
-  background: linear-gradient(to bottom right, white, rgb(250, 247, 248), rgb(249, 229, 229));
+  /*background: linear-gradient(to bottom right, white, rgb(250, 247, 248), rgb(249, 229, 229));*/
 }
 
 .pagination {
   margin: 60 auto;
+}
+
+
+.btn-mine {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #96a8de;
+  --bs-btn-border-color: #5e6783;
+  --bs-btn-hover-color: #1d1c1c;
+  --bs-btn-hover-bg: #96a8de;
+  --bs-btn-hover-border-color: #5e6783;
+  --bs-btn-focus-shadow-rgb: 49, 132, 253;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #96a8de;
+  --bs-btn-active-border-color: #5e6783;
+  --bs-btn-active-shadow: inset 0 3px 5px #5e6783;
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #bec1ca;
+  --bs-btn-disabled-border-color: #5e6783;
+}
+
+.btn-success {
+  --bs-btn-color: #fff;
+  --bs-btn-bg: #5f8d77;
+  --bs-btn-border-color: #5f8d77;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-hover-bg: #5f8d77;
+  --bs-btn-hover-border-color: #5f8d773;
+  --bs-btn-focus-shadow-rgb: 60, 153, 110;
+  --bs-btn-active-color: #fff;
+  --bs-btn-active-bg: #146c43;
+  --bs-btn-active-border-color: #13653f;
+  --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  --bs-btn-disabled-color: #fff;
+  --bs-btn-disabled-bg: #5f8d77;
+  --bs-btn-disabled-border-color: #5f8d77;
 }
 
 nav {
@@ -243,7 +370,10 @@ nav ul {
 }
 
 
+
 /* https://itproger.com/course/django/5 
 https://getbootstrap.com/docs/5.3/forms/checks-radios/
 http://mybootstrap.ru/base-css/
+https://www.bootstrapcdn.com/ 
+https://fontawesome.com/ - иконки
 */

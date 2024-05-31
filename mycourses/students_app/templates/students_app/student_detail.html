@@ -15,7 +15,7 @@
 {% if student.status == 'r' %}
 <hr>
 <p><strong>Дата подачи заявки:</strong> {{student.request_date|date:"d.m.Y"}} г.</p>
-<a class="btn btn-success left-20" href="{% url 'student-approve' student.pk %}?next={{request.path}}">Обработать
+<a class="btn btn-mine bottom-ref-left" href="{% url 'student-approve' student.pk %}?next={{request.path}}">Обработать
     заявку</a>
 {% else %}
 <div style="margin-top:20px; margin-bottom:20px;">

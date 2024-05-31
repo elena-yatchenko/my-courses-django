@@ -10,7 +10,7 @@
     {% if user.is_authenticated %}
     <p>У данного пользователя нет доступа к выбранному действию. Вы можете войти под другим пользователем</p>
     {% else %}
-    <p>Войдите в ваш аккаунт</p>
+    <h3>Войдите в ваш аккаунт</h3>
     {% endif %}
     {% endif %}
 
@@ -20,22 +20,22 @@
             <table>
 
                 <tr>
-                    <td>{{ form.username.label_tag }}</td>
+                    <td><strong>{{ form.username.label_tag }}</strong></td>
                     <td class="form-control">{{ form.username }}</td>
                 </tr>
 
                 <tr>
-                    <td>{{ form.password.label_tag }}</td>
+                    <td><strong>{{ form.password.label_tag }}</strong></td>
                     <td class="form-control">{{ form.password }}</td>
                 </tr>
             </table>
 
-            <input class="btn" type="submit" value="Войти" />
+            <input class="btn btn-success" type="submit" value="Войти" />
             <input type="hidden" name="next" value="{{ next }}" />
         </form>
     </div>
 
-    <p style="margin-top:20px">У вас еще нет аккаунта? <a href="{% url 'register' %}">Зарегистрируйтесь</a></p>
+    <h5 class="m-top-20">У вас еще нет аккаунта? </h5><a href="{% url 'register' %}">Зарегистрируйтесь</a>
     <!-- {# Assumes you setup the password_reset view in your URLconf #}
 <p><a href="{% url 'password_reset' %}">Lost password?</a></p> -->
 

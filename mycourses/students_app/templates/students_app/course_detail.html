@@ -3,25 +3,30 @@
 <div class="col-sm-9">
     <div class="content">
         {% block content %}
-        <h1>Курс: {{ course.name }}</h1>
+        <div class="mine-block">
+            <h1>Курс: {{ course.name }}</h1>
 
-        <p><strong>Категория:</strong> {{ course.category }}</p>
-        <p><strong>Описание:</strong> {{ course.summary }}</p>
-        <p><strong>Продолжительность:</strong> {{ course.lasting }} мес.</p>
-        <p><strong>Стоимость обучения:</strong> {{ course.total_cost }} азн</p>
-        <p><strong>Рейтинг:</strong> {% if course.rating_count is not None %}{{ course.rating_count }}
-            {% else %}Нет отзывов{%endif %}
-        </p>
+            <p style="font-size: 27px;"><strong>Категория:</strong> {{ course.category }}</p>
+            <p><strong>Описание:</strong> {{ course.summary }}</p>
+            <div style="display: flex">
+                <p><strong><i class="far fa-calendar-days icons"></i></strong>
+                    <span class="icons-text">{{ course.lasting }} мес.</span>
+                </p>
+                <p><strong><i class="fas fa-money-check-dollar icons"></i></strong>
+                    <span class="icons-text"> {{ course.total_cost }} азн</span>
+                </p>
+                <p><strong><i class="fa-solid fa-star-half-stroke icons"></i></strong>
+                    <span class="icons-text">{% if course.rating_count is not None %}{{ course.rating_count }}
+                        {% else %}Нет отзывов{%endif %}</span>
+                </p>
+            </div>
+        </div>
         <hr>
         <p class="text-muted">Количество просмотров: {{ course.views_num }}</p>
-        <button type="button"><a href="{% url 'student-request' course.id%}">Подать заявку</a></button>
-        <!-- Другой вариант кнопки -->
-        <!-- <div class="tags">
-        <a href="{% url 'student-request' course.id%}" class="btn white">Подать заявку</a>
-        <div class="btn_blobs"></div>
-    </div> -->
+        <a class="btn btn-mine" href="{% url 'student-request' course.id%}">Подать заявку</a>
+
         <!-- для авторизованных и НЕ сотрудников-->
-        <h4 style="margin-top:20px"><strong>Отзывы</strong> ({{ reviews.count }})</h4>
+        <p class="m-top-20 title">Отзывы ({{ reviews.count }})</p>
         {% if user.is_authenticated and not user.is_staff %}
         <p><strong>Здесь вы можете добавить свой отзыв</strong></p>
         <div class="shadowbox">
@@ -46,30 +51,41 @@
         </div>
         {% endif %}
         <hr>
+
         {% for review in reviews %}
-        <p><strong>{{review.student.full_name}}</strong> Оценка курса: <b>{{ review.rate }}</b>.
-            <em><span style="font-size:12px;font-weight:bold"> Добавлен: {{review.added}}</span></em>
-        </p>
-        <p><em>{{ review.text }}</em></p>
+        <div class="review-div">
+            <!-- <div class="rev-name"> -->
+            <p class="rev-p"><strong>{{review.student.full_name}}</strong>
+                <em><span class="rev-line"> {{review.added}}</span></em>
+                <span class="rev-line">Оценка курса: <b>{{ review.rate }}</b></span>
+            </p>
+            <!-- </div> -->
+            <div class="mine-block">
+                <p><em>{{ review.text }}</em></p>
+            </div>
+        </div>
         {% endfor %}
 
         {% if user.is_staff %}
         <hr>
-        <div style="margin-left:20px;margin-top:20px">
-            <h4><strong>Студенты </strong>{% if students %} ({{ students.count }}){% endif %}</h4>
-            <hr>
+
+        <div style="margin-left:30px;margin-top:20px">
+            <p class="title">Студенты{% if students %} ({{ students.count }}){% endif %}</p>
             {% if students %}
+
             <ol>
                 {% for student in students %}
 
-                <li><a class="student" href="{{ student.get_absolute_url }}">{{ student.full_name }}</a>
+                <li><a class="mine-ref student" href="{{ student.get_absolute_url }}">{{ student.full_name|upper }}</a>
+
+                    <span class="mark-line"><em>Средний балл: <strong>{{student.average_mark}}</strong></em></span>
                 </li>
-                <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
                 {% endfor %}
             </ol>
             {% else %}<p>На данном курсе нет активных студентов</p>
             {% endif %}
         </div>
+
         {% endif %}
         {% endblock %}
     </div>

@@ -9,16 +9,18 @@
 
         {% for course in page_obj %}
         <hr>
-        <li>
-            <a href="{{ course.get_absolute_url }}">{{ course.name }}</a>
-            {% if user.is_staff %}
-            <a class="btn btn-success left-20" href="{% url 'add-mark' course.id %}?next={{request.path}}">
-                Добавить оценки по курсу</a>
+        <div class="mine-block mine-bl-pos">
+            <li class="block-text">
+                <a class="mine-ref course-list" href="{{ course.get_absolute_url }}">{{ course.name }}</a>
+                {% if user.is_staff %}
+                <a class="btn btn-mine bottom-ref-left" href="{% url 'add-mark' course.id %}?next={{request.path}}">
+                    Добавить оценки по курсу</a>
 
 
-            {% endif %}
-            <br>Продолжительность: {{course.lasting }} мес.
-        </li>
+                {% endif %}
+                <br>Продолжительность: <strong>{{course.lasting }} мес.</strong>
+            </li>
+        </div>
         {% endfor %}
 
     </ul>

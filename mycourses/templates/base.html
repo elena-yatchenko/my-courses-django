@@ -52,8 +52,9 @@
                     <ul>
                         {% if user.is_authenticated %}
                         <!-- <li>User: {{ user.get_username }}</li> -->
-                        <li>Пользователь:</li>
-                        <li style="font-size: 20px; margin-top: 5px;">{{ user.first_name }} {{ user.last_name }}</li>
+                        <!-- <li>Пользователь:</li> -->
+                        <li style="font-size: 20px; margin-top: 5px;">
+                            {{ user.first_name|upper }} {{ user.last_name|upper }}</li>
                         <!-- <li><button type="button"><a href="/">Личный кабинет</a></button></li> -->
                         <li style="margin-top: 5px;"><a href="{% url 'logout' %}">Выход</a></li>
                         {% else %}

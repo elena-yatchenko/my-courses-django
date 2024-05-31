@@ -19,14 +19,16 @@
             <a class="student" href="{{ student.get_absolute_url }}">{{ student.full_name }}</a>
             {% if status == 'r' %}
             <p class="m-10"><em>Дата подачи заявки: {{student.request_date|date:"d.m.Y"}}</em>
-                <a class="btn btn-success left-20" href="{% url 'student-approve' student.pk %}?next={{request.path}}">
+                <a class="btn btn-mine bottom-ref-left"
+                    href="{% url 'student-approve' student.pk %}?next={{request.path}}">
                     Обработать заявку</a>
             </p>{% endif %}
             {% if status == 'a' %}
             <p class="m-10"><em>Дата регистрации: {{student.reg_date|date:"d.m.Y"}}</p>{% endif %}</em>
             {% if student.is_finished and student.status != 'f' %}
             <p class="{% if student.is_finished %}text-danger{% endif %} m-10"">Срок обучения завершился
-                <a class=" btn btn-danger left-20" href="{% url 'student-archive' student.pk %}?next={{request.path}}">
+                <a class=" btn btn-mine bottom-ref-left0"
+                href="{% url 'student-archive' student.pk %}?next={{request.path}}">
                 Добавить в архив</a>
             </p>{% endif %}
         </li>
