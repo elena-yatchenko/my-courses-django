@@ -3,47 +3,53 @@
 {% block content %}
 <h1>{% if status == 'r' %}Заявки на обучение{% elif status == 'a' %}Список студентов
     {% elif status == 'f' %}Архив студентов{% endif %}</h1>
-<hr>
 
 {% if student_list %}
-{% for course in page_obj %}
-
 <ul>
-    <li>
-        <p class="course-name"><strong>{{ course.name }} ({{course.category}})</strong></p>
-    </li>
-    <ol>
-        {% for student in student_list %}
-        {% if student.course == course %}
-        <li>
-            <a class="student" href="{{ student.get_absolute_url }}">{{ student.full_name }}</a>
-            {% if status == 'r' %}
-            <p class="m-10"><em>Дата подачи заявки: {{student.request_date|date:"d.m.Y"}}</em>
+    {% for course in page_obj %}
+
+    <hr>
+    <div class="mine-block block-text">
+        <p class="mine-ref course-list"><strong>{{ course.name }} ({{course.category}})</strong></p>
+
+        <ol>
+            {% for student in student_list %}
+            {% if student.course == course %}
+            <li class="m-top-20">
+                <a class="mine-ref student" href="{{ student.get_absolute_url }}">{{ student.full_name|upper }}</a>
+                {% if status == 'r' %}
+                <span class="mark-line"><em>Дата подачи заявки: {{student.request_date|date:"d.m.Y"}} г.</em></span>
                 <a class="btn btn-mine bottom-ref-left"
                     href="{% url 'student-approve' student.pk %}?next={{request.path}}">
                     Обработать заявку</a>
-            </p>{% endif %}
-            {% if status == 'a' %}
-            <p class="m-10"><em>Дата регистрации: {{student.reg_date|date:"d.m.Y"}}</p>{% endif %}</em>
-            {% if student.is_finished and student.status != 'f' %}
-            <p class="{% if student.is_finished %}text-danger{% endif %} m-10"">Срок обучения завершился
-                <a class=" btn btn-mine bottom-ref-left0"
-                href="{% url 'student-archive' student.pk %}?next={{request.path}}">
-                Добавить в архив</a>
-            </p>{% endif %}
-        </li>
-        {% endif %}
-        {% endfor %}
-    </ol>
+                {% endif %}
+                {% if status == 'a' %}
+                <span class="mark-line"><em>Дата регистрации: {{student.reg_date|date:"d.m.Y"}} г.</em>
+                    {% endif %}
+                    {% if student.is_finished and student.status != 'f' %}
+                    <a class=" btn btn-mine bottom-ref-left mark-line"
+                        href="{% url 'student-archive' student.pk %}?next={{request.path}}">Добавить в архив</a>
+                </span>
+                <br>
+                <span class="{% if student.is_finished %}text-danger{% endif %} m-top-15">
+                    <i class="fas fa-triangle-exclamation icons-sm"></i> Срок обучения завершился</span>
+                {% endif %}
+            </li>
+            {% endif %}
+            {% endfor %}
+        </ol>
+    </div>
+    {% endfor %}
 </ul>
-
-{% endfor %}
 {% else %}
-<p>{% if status == 'r' %}К сожалению, новых заявок на обучение нет
-    {% elif status == 'a' %}Студентов нет
-    {% elif status == 'f' %}Архив студентов пуст{% endif %}</p>
+<p class="info-text"> <i class="fas fa-circle-exclamation icons"></i>
+    {% if status == 'r' %} К сожалению, новых заявок на обучение нет
+    {% elif status == 'a' %} Студентов нет
+    {% elif status == 'f' %} Архив студентов пуст{% endif %}</p>
 {% endif %}
 {% endblock %}
+
+
 {% block pagination %}
 <div class="pagination">
     <span class="page-links">

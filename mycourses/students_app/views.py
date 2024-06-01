@@ -279,6 +279,8 @@ def student_update(request, stud_id):
             student.surname = surname
             student.phone = phone
             student.save()
+            current_user.last_name = surname
+            current_user.first_name = name
             current_user.email = email
             current_user.save()
             return redirect("profile")
@@ -292,9 +294,10 @@ def student_update(request, stud_id):
                 "surname": student.surname,
                 "email": current_user.email,
                 "phone": student.phone,
+                "date_of_birth": student.date_of_birth,
             }
         )
-        message = "Редактирование данных студента"
+        message = "Внесите необходимые изменения"
 
     return render(
         request,
@@ -396,7 +399,7 @@ def payment_update(request, stud_id, pay_id):
             }
         )
         # payment_form.fields["student"].disabled = True
-        message = "Заполните поля формы"
+        message = "Внесите требуемые изменения"
 
     return render(
         request,

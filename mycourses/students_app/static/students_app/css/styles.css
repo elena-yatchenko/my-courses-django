@@ -25,11 +25,13 @@ h3,
 h4,
 h5 {
   color: rgb(89, 11, 134);
+  padding-bottom: 20px;
 }
 
 h2 {
   color: rgb(137, 127, 144);
   -webkit-text-stroke: 0.5px rgb(45, 2, 69);
+  padding-bottom: 20px;
 }
 
 body p {
@@ -76,6 +78,10 @@ aside {
   border-radius: 9px;
 }
 
+.m-left-0 {
+  margin-left: 0px;
+}
+
 /* для текста пример*/
 /* aside .text {
   font-size: 20px;
@@ -84,11 +90,7 @@ aside {
   position: relative;
   top: -5px;
 }
-
-aside h3 {
-  margin-top: 50px;
-  font-size: 25px;
-} */
+*/
 
 aside ul li {
   color: #530856;
@@ -102,7 +104,7 @@ aside ul li {
 
 .mine-block {
   display: block;
-  background: linear-gradient(to bottom right, white, rgb(250, 247, 248), rgb(254, 244, 244));
+  background: linear-gradient(to bottom right, white, rgb(250, 247, 248), #a3859f);
   border: 1px solid rgb(183, 186, 187);
   border-radius: 9px;
 
@@ -140,10 +142,10 @@ aside ul li {
 }
 
 .title {
-  font-size: 25px;
+  font-size: 23px;
   font-weight: bold;
   font-family: 'Open Sans', sans-serif;
-  color: rgb(153 0 62);
+  color: rgb(89, 11, 134);
 }
 
 .mine-ref {
@@ -187,18 +189,24 @@ aside a:hover {
 }
 
 .student:hover {
-  font-size: larger;
+  font-size: large;
   color: #f31919;
 
 }
 
-.m-10 {
-  margin: 5px auto;
-  font-size: 15px;
+.m-top-15 {
+  margin-top: 15px;
+  /* margin-left: 0px;
+  font-size: 15px; */
 }
 
 .m-top-20 {
   margin-top: 20px;
+}
+
+.m-top-bot-20 {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .bottom-ref-left {
@@ -207,15 +215,20 @@ aside a:hover {
 
 .bottom-ref-left-top {
   margin-left: 20px;
-  top: 20px;
+  margin-top: 20px;
 }
 
 .icons {
   font-size: 25px;
+  padding-right: 25px;
+}
+
+.icons-sm {
+  padding-right: 10px;
 }
 
 .icons-text {
-  padding-left: 20px;
+  /* padding-left: 20px; */
   color: rgb(60, 3, 94);
   font-weight: bold;
   font-size: 18px;
@@ -238,25 +251,26 @@ aside a:hover {
 }
 
 .pagination {
-  margin: 60 auto;
+  margin-top: 50px;
+  margin-left: 30px;
 }
 
 
 .btn-mine {
   --bs-btn-color: #fff;
-  --bs-btn-bg: #96a8de;
-  --bs-btn-border-color: #5e6783;
+  --bs-btn-bg: #a3859f;
+  --bs-btn-border-color: #a3859f;
   --bs-btn-hover-color: #1d1c1c;
-  --bs-btn-hover-bg: #96a8de;
-  --bs-btn-hover-border-color: #5e6783;
+  --bs-btn-hover-bg: #a3859f;
+  --bs-btn-hover-border-color: #a3859f;
   --bs-btn-focus-shadow-rgb: 49, 132, 253;
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #96a8de;
-  --bs-btn-active-border-color: #5e6783;
-  --bs-btn-active-shadow: inset 0 3px 5px #5e6783;
+  --bs-btn-active-bg: #a3859f;
+  --bs-btn-active-border-color: #a3859f;
+  --bs-btn-active-shadow: inset 0 3px 5px #a3859f;
   --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #bec1ca;
-  --bs-btn-disabled-border-color: #5e6783;
+  --bs-btn-disabled-bg: #a3859f;
+  --bs-btn-disabled-border-color: #6f68913;
 }
 
 .btn-success {
@@ -268,8 +282,8 @@ aside a:hover {
   --bs-btn-hover-border-color: #5f8d773;
   --bs-btn-focus-shadow-rgb: 60, 153, 110;
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #146c43;
-  --bs-btn-active-border-color: #13653f;
+  --bs-btn-active-bg: #5f8d77;
+  --bs-btn-active-border-color: #5f8d77;
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #fff;
   --bs-btn-disabled-bg: #5f8d77;
@@ -355,6 +369,7 @@ nav ul {
 .shadowbox {
   width: 50%;
   border: 1px solid hwb(0 20% 80%);
+  border-radius: 9px;
   box-shadow: 8px 8px 5px #444;
   padding: 8px 12px;
   background-image: linear-gradient(180deg, #fff, #ddd 40%, #ccc);
@@ -369,7 +384,39 @@ nav ul {
   justify-content: space-between;
 }
 
+.info-text {
+  font-size: 20px;
+  font-weight: bold;
+  padding-top: 30px;
+}
 
+.text-warning {
+  --bs-text-opacity: 1;
+  color: rgb(213 123 7) !important;
+  font-size: 20px;
+}
+
+.text-success {
+  --bs-text-opacity: 1;
+  color: rgba(var(--bs-success-rgb), var(--bs-text-opacity)) !important;
+  font-size: 20px;
+}
+
+.text-danger {
+  --bs-text-opacity: 1;
+  color: rgba(var(--bs-danger-rgb), var(--bs-text-opacity)) !important;
+  font-size: 20px;
+}
+
+.pay-status {
+  color: rgb(71, 80, 82);
+  font-size: 20px;
+}
+
+.img-profile {
+  width: 40%;
+  float: right;
+}
 
 /* https://itproger.com/course/django/5 
 https://getbootstrap.com/docs/5.3/forms/checks-radios/

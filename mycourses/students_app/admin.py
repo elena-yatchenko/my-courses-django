@@ -158,7 +158,7 @@ class StudentAdmin(admin.ModelAdmin):
             "Личные данные",
             {
                 "classes": ["collapse"],
-                "fields": ["phone", "date_of_birth"],
+                "fields": ["phone", "date_of_birth", "photo"],
             },
         ),
         (

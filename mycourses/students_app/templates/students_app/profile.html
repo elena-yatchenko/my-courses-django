@@ -2,78 +2,92 @@
 
 
 {% block content %}
-<h4>Личный кабинет пользователя: {{ user.first_name }} {{ user.last_name }}</h4>
+<h4 class="mine-block block-text">
+    Личный кабинет пользователя: {{ user.first_name|upper }} {{ user.last_name|upper }}
+</h4>
 {% for student, payments in stud_pay.items %}
 
-<h3>Курс: {{student.course }}</h3>
-<h4>Студент: {{ student.full_name }}</h4>
+<h2>Курс: {{student.course }}</h2>
 
 {% if student.photo %}
-<p class="photo">
-    <img src="{{ student.photo.url }}" class="img-responsive" style="width: 30%; float: right; margin-right: 50px;"
-        alt="Ваше фото">
-    <!-- class="img-responsive" style="width: 100%; float: left; margin-right: 10px;"  -->
+<p>
+    <img src="{{ student.photo.url }}" class="img-profile" alt="Ваше фото">
 </p>
-<p style="margin-bottom:20px;"><a href="{% url 'add-photo' student.pk %}">Изменить фото</a></p>
+<p><a href="{% url 'add-photo' student.pk %}">Изменить фото</a></p>
 {% else %}
-<button type="button" style="margin-bottom:20px;"><a href="{% url 'add-photo' student.pk %}">Добавить фото</a></button>
+<a class="btn btn-mine bottom-ref-left" href="{% url 'add-photo' student.pk %}">Добавить фото</a>
 {% endif %}
-<p><strong>Телефон:</strong> {{student.phone}}</p>
-<p><strong>E-mail:</strong> {{student.related_user.email}}</p>
-<p><strong>Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}} г.</p>
-<button type="button"><a href="{% url 'student-update' student.id%}">Редактировать данные</a></button>
+<p><i class="fas fa-phone-volume icons-sm"></i><strong> Телефон:</strong> {{student.phone}}</p>
+<p><i class="fas fa-envelope-open-text icons-sm"></i><strong> E-mail:</strong> {{student.related_user.email}}</p>
+<p><i class="fas fa-cake-candles icons-sm"></i><strong> Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}}
+    г.</p>
+<a class="btn btn-mine bottom-ref-left" href="{% url 'student-update' student.id%}">Редактировать данные</a>
 {% if student.status == 'r' %}
 <br>
-<h4><strong>Ваша заявка находится на рассмотрении</strong></h4>
-<p><strong>Дата подачи заявки:</strong> {{student.request_date|date:"d.m.Y"}} г.</p>
+<p class="pay-status"><strong>Ваша заявка находится на рассмотрении</strong></p>
+<p><i class="fas fa-calendar-days icons-sm"></i><strong> Дата подачи заявки:</strong>
+    {{student.request_date|date:"d.m.Y"}} г.
+</p>
 {% else %}
-<div style="margin-top:20px; margin-bottom:20px;">
-    <!-- <p><strong>Курс:</strong> {{student.course }}</p> -->
-    <p><strong>Дата регистрации:</strong> {{student.reg_date|date:"d.m.Y"}} г.</p>
-    <p><strong>Средний балл:</strong> {{student.average_mark}}</p>
+<div class="m-top-bot-20">
+    <p><i class="fas fa-calendar-days icons-sm"></i><strong> Дата регистрации:</strong>
+        {{student.reg_date|date:"d.m.Y"}} г.</p>
+    <p><i class="fas fa-medal icons-sm"></i><strong> Средний балл:</strong> {{student.average_mark}}</p>
 </div>
-<p class="{% if student.is_paid %}text-success{% elif not payments %}text-danger{% else %}text-warning{% endif %}">
-    Статус оплаты: {% if student.is_paid %}Оплачено полностью
-    {% elif not payments %}Оплаты нет
-    {% else %}Оплачено частично{% endif %}</p>
-<hr>
-<div style="margin-left:20px;margin-top:20px">
-    <h4><strong>Данные оплаты</strong></h4>
-    <br>
-    <p class="text-success"><strong>Общая стоимость обучения: {{ student.course.total_cost}} азн</strong>
+<div class="mine-block">
+    <p class="pay-status">Статус оплаты:
+        {% if student.is_paid %}
+        <span class="text-success mark-line"><strong>Оплачено полностью</strong></span>
+        {% elif not payments %}
+        <span class="text-danger mark-line"><strong>Оплаты нет</strong></span>
+        {% else %}
+        <span class="text-warning mark-line"><strong>Оплачено частично</strong></span>
+        {% endif %}
     </p>
-    <p class="text-warning"><strong>Остаток для оплаты: {{ student.rest_of_payment}} азн</strong>
-    </p><br>
+</div>
+<hr>
+<div class="bottom-ref-left-top">
+    <p class="pay-status">Общая стоимость обучения:
+        <span class="text-success"><strong>{{ student.course.total_cost}} азн</strong></span>
+    </p>
+    <p class="pay-status">Остаток для оплаты:
+        <span class="text-danger"><strong>{{ student.rest_of_payment}} азн</strong></span>
+    </p>
+
     {% if payments %}
-    <p><b>ПЛАТЕЖИ</b></p>
+    <p class="pay-status"><b>ПЛАТЕЖИ</b></p>
     <ol>
         {% for payment in payments %}
 
-        <li><strong>Сумма: </strong>{{ payment.amount }} азн
+        <li><strong>Оплата: {{ payment.amount }} азн</strong>
+            <a class="btn btn-mine bottom-ref-left" href="{% url 'payment-update' student.id payment.id %}">
+                Редактировать данные</a>
             <ul>
-                <li><strong>Дата: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</li>
+                <li style='list-style:none'><strong>Дата:</strong> {{ payment.paid_date|date:"d.m.Y" }} г.</li>
                 {% if payment.document %}
-                <li><strong>Документ</strong>, подтверждающий оплату:
-                    <a href="{{ payment.document.url }}">{{ payment.document.name }}</a>
+                <li style='list-style:none'><strong><a href="{{ payment.document.url }}">Документ</a></strong>,
+                    подтверждающий оплату:
+
                 </li>
                 {% else %}
-                <li class="text-danger" style='list-style-type:none'>(документ, подтверждающий оплату, отсутствует)</li>
+                <li style='list-style:none'><i class="fas fa-triangle-exclamation icons-sm"></i>
+                    документ, подтверждающий оплату, отсутствует</li>
                 {% endif %}
-            </ul>
         </li>
-
-        <!-- <p><strong>Дата оплаты: </strong>{{ payment.paid_date|date:"d.m.Y" }} г.</p>
-    <p><strong>Сумма: </strong>{{ payment.amount }} азн</p> -->
+        </ul>
+        </li>
         {% endfor %}
     </ol>
-    {% else %}<p>Нет зарегистрированных платежей</p>
+    {% else %}
+    <p class="text-danger"><i class="fas fa-triangle-exclamation icons-sm"></i> Нет зарегистрированных платежей!
+    </p>
     {% endif %}
 </div>
 
 
 {% endif %}
 {% endfor %}
-<div style="margin-top:20px; margin-bottom:20px;">
+<div class="pagination">
     <p class="text-muted">Дата последнего посещения: {{ visit_date|date:"d.m.Y" }}</p>
 </div>
 {% endblock %}

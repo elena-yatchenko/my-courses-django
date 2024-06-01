@@ -2,7 +2,7 @@
 
 <div class="content">
     {% block content %}
-    <h1>Регистрация оплаты студента</h1>
+    <h2>Данные по оплате студента</h2>
     <h4 class="{% if form.errors %}text-danger{% else %}text-success{% endif %}">{{ message }}</h4>
 
     <div class="shadowbox">
@@ -10,10 +10,10 @@
             {{ form.as_p }}
             {% csrf_token %}
             <div class="form-actions">
-                <button type="submit" class="btn btn-success"><strong>Подтвердить</strong></button>
-                <button type="reset" class="btn btn-danger"><strong>Очистить данные</strong></button>
+                <button type="submit" class="btn btn-success bottom-ref-left-top"><strong>Подтвердить</strong></button>
+                <button type="reset" class="btn btn-danger bottom-ref-left-top">
+                    <strong>Очистить данные</strong></button>
             </div>
-            <!-- <p><input type="submit" value="Подтвердить"></p> -->
         </form>
     </div>
     {% endblock %}
