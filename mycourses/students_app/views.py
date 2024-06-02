@@ -41,6 +41,11 @@ def main(request):
     )
 
 
+def contacts(request):
+    """Отображение контактов организации"""
+    return render(request, "students_app/contacts.html")
+
+
 def courses(request, flag):
     category = Category.objects.filter(flag=flag).first()
     course_list = Course.objects.filter(category=category, is_deleted=False)
@@ -194,7 +199,7 @@ def register(request):
             return render(
                 request,
                 "students_app/register_done.html",
-                {"user_form": user_form},
+                {"user_form": user_form, "new_user": new_user},
             )
         else:
             # !!!! добавить ЛОГИРОВАНИЕ
@@ -502,7 +507,8 @@ def add_mark(request, course_id):
     else:
         add_form = AddMarkForm()
         add_form.fields["student"].queryset = switch_query
-        message = "Введите оценку"
+        message = "Выберите студента и добавьте оценку. Вы можете выставлять оценки различным \
+            студентам данного курса, каждый раз нажимая кнопку 'Подтвердить'"
     return render(
         request,
         "students_app/mark_form.html",

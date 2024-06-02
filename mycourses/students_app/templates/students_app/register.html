@@ -1,18 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Создание нового пользователя</h1>
+<h2 style="text-align: left">Создание нового пользователя</h2>
 <h4 class="{% if form.errors %}text-danger{% else %}text-success{% endif %}">{{ message }}</h4>
 
 <div class="shadowbox">
     <form action="." method="post">
         {% csrf_token %}
         {{ user_form.as_p }}
-
-        <!-- <p><input type="submit" value="Создать аккаунт"></p> -->
-        <p><button type="submit"><strong>Создать аккаунт</strong></button>
-            <button type="reset"><strong>Очистить данные</strong></button>
-        </p>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success bottom-ref-left-top"><strong>Подтвердить</strong></button>
+            <button type="reset" class="btn btn-danger bottom-ref-left-top">
+                <strong>Очистить данные</strong></button>
+        </div>
     </form>
 </div>
 {% endblock %}

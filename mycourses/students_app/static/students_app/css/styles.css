@@ -1,9 +1,20 @@
 .sidebar-nav {
+  overflow: hidden;
   margin-top: 35px;
-  padding-left: 20px;
+  margin-left: 20px;
   list-style: none;
   color: rgb(71, 80, 82);
-  display: block;
+  /* display: block;
+  background-color: #ccc; */
+  /* padding-left:20px; */
+  /* display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* align-content: center; */
+  /* justify-content: space-evenly;
+  align-items: baseline;
+  */
+
 }
 
 * {
@@ -416,6 +427,10 @@ nav ul {
 .img-profile {
   width: 40%;
   float: right;
+}
+
+.text {
+  text-align: justify;
 }
 
 /* https://itproger.com/course/django/5 

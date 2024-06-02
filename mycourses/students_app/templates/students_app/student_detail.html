@@ -65,7 +65,7 @@
     <ol>
         {% for payment in payments %}
 
-        <li><strong>Оплата: {{ payment.amount }} азн</strong>
+        <li class="m-top-15"><strong>Оплата: {{ payment.amount }} азн</strong>
             <a class="btn btn-mine bottom-ref-left" href="{% url 'payment-update' student.id payment.id %}">
                 Редактировать данные</a>
             <ul>

@@ -2,8 +2,8 @@
 
 
 {% block content %}
-<h4><strong>Курс: {{ course.name }}</strong></h4>
-<h3>Сегодня: {{ current_date|date:"d.m.Y" }}</h3>
+<h2 style="text-align: left">Курс: {{ course.name }}</h2>
+<p class="m-left-0" style="font-size: 20px;"><strong>Текущая дата: {{ current_date|date:"d.m.Y" }}</strong></p>
 
 <h4 class="{% if form.errors %}text-danger{% else %}text-success{% endif %}">{{ message }}</h4>
 
@@ -11,11 +11,15 @@
     <form action="" method="post">
         {{ form.as_p }}
         {% csrf_token %}
-        <p><button type="submit"><strong>Подтвердить</strong></button></p>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success bottom-ref-left-top"><strong>Подтвердить</strong></button>
+            <button type="reset" class="btn btn-danger bottom-ref-left-top">
+                <strong>Очистить данные</strong></button>
+        </div>
     </form>
 </div>
-<hr>
-<p>Чтобы завершить работу с формой, нажмите кнопку
-    <button type="button"><a href="{{ back_url }}">Завершить</a></button>
+
+<p class="m-left-0" style="font-size: 20px;">Чтобы завершить работу с формой, нажмите кнопку
+    <a class="btn btn-success bottom-ref-left" href="{{ back_url }}">Завершить</a>
 </p>
 {% endblock %}

@@ -1,9 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h2 class="text-danger">{{message}}</h2>
+<h2 class="text-danger"><i class="fas fa-triangle-exclamation icons"> </i>{{message}}</h2>
 <hr>
-<h4>Вы можете вернуться на <a href="{% url 'student-detail' student.id%}">страницу студента</a> и проверить данные
-    оплаты
-</h4>
+<p class="info-text">Вы можете вернуться на <a href="{% url 'student-detail' student.id%}">страницу студента</a> и
+    проверить данные оплаты</p>
 {% endblock %}

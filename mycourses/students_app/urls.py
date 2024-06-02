@@ -8,6 +8,7 @@ urlpatterns = [
     path("courses/<slug:flag>", views.courses, name="courses"),
     path("student/<int:id>", views.student_detail, name="student-detail"),
     path("profile/", views.profile, name="profile"),
+    path("contacts/", views.contacts, name="contacts"),
     path("register/", views.register, name="register"),
     path(
         "student/register/<int:course_id>",
@@ -26,10 +27,10 @@ urlpatterns = [
     ),
     path("course/<int:course_id>/mark", views.add_mark, name="add-mark"),
     path("student/photo/<int:stud_id>", views.add_photo, name="add-photo"),
+    path("student/<int:stud_id>/update", views.student_update, name="student-update"),
     path(
-        "student/<int:stud_id>/update", views.student_update, name="student-update"
-    ),
-    path(
-        "payment/<stud_id>/<int:pay_id>/update", views.payment_update, name="payment-update"
+        "payment/<stud_id>/<int:pay_id>/update",
+        views.payment_update,
+        name="payment-update",
     ),
 ]

@@ -20,8 +20,16 @@ class RegisterUserForm(forms.ModelForm):
         widgets = {
             "username": forms.TextInput(attrs={"class": "form-control"}),
             "email": forms.EmailInput(
-                attrs={"class": "form-control", "placeholder": "user@mail.ru"}
+                attrs={"class": "form-control", "placeholder": "user@mail.ru"},
             ),
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+        }
+        labels = {
+            "username": "Имя пользователя (логин)",
+            "email": "Эл. почта",
+            "first_name": "Имя",
+            "last_name": "Фамилия",
         }
 
     def clean_password2(self):
@@ -208,11 +216,11 @@ class AddMarkForm(forms.Form):
         label="Студент",
         queryset=Student.objects.all(),
         empty_label=" ----- ",
-        widget=forms.Select(attrs={"class": "form-check-input"}),
+        widget=forms.Select(attrs={"class": "form-control"}),
     )
     mark = forms.ChoiceField(
         label="Оценка",
-        widget=forms.Select(attrs={"class": "form-check-inline"}),
+        widget=forms.Select(attrs={"class": "form-control"}),
         choices=MARKS,
         required=True,
     )
@@ -220,6 +228,7 @@ class AddMarkForm(forms.Form):
         label="Дата",
         initial=date.today(),
         widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        help_text="Дата, за которую выставляется оценка",
     )
 
     # def __init__(self, course, *args, **kwargs):
