@@ -28,9 +28,7 @@
     <p><i class="fas fa-medal icons-sm"></i><strong> Средний балл:</strong> {{student.average_mark}}</p>
 </div>
 {% if student.status == 'f' %}
-
-<p class="text-danger"><strong>Студент в архиве</strong></p>
-
+<p class="text-danger"><strong>Обучение завершено</strong></p>
 {% endif %}
 <hr>
 <div class="mine-block">
@@ -67,7 +65,7 @@
 
         <li class="m-top-15"><strong>Оплата: {{ payment.amount }} азн</strong>
             <a class="btn btn-mine bottom-ref-left" href="{% url 'payment-update' student.id payment.id %}">
-                Редактировать данные</a>
+                Редактировать платеж</a>
             <ul>
                 <li style='list-style:none'><strong>Дата:</strong> {{ payment.paid_date|date:"d.m.Y" }} г.</li>
                 {% if payment.document %}

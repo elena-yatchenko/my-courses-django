@@ -23,7 +23,7 @@
         </div>
         <hr>
         <p class="text-muted m-left-0">Количество просмотров: {{ course.views_num }}</p>
-        <a class="btn btn-mine m-top-20" href="{% url 'student-request' course.id%}">Подать заявку</a>
+        <a class="btn btn-large btn-mine text-20" href="{% url 'student-request' course.id%}">Подать заявку</a>
 
         <!-- для авторизованных и НЕ сотрудников-->
 
@@ -35,7 +35,7 @@
         <div class="shadowbox">
             <form action="" method="post">
                 <!-- {{ form.as_p }} -->
-                <p>{{ form.text }}</p>
+                {{ form.text }}
                 <p><b>Оцените курс</b></p>
                 <fieldset class="row row-cols-lg-auto g-3 align-items-center" id="radio_rate">
                     {% for radio in form.rate %}
@@ -46,10 +46,10 @@
                     {% endfor%}
                 </fieldset>
                 {% csrf_token %}
-                <p><button type="submit"><strong>Отправить</strong></button>
-                    <button type="reset"><strong>Очистить данные</strong></button>
-                </p>
-                <!-- <p><input type="submit" value="Подтвердить"></p> -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success m-top-15 text-20">
+                        Отправить</button>
+                </div>
             </form>
         </div>
         {% endif %}

@@ -70,7 +70,8 @@ class RegisterStudentForm(forms.Form):
     date_of_birth = forms.DateField(
         initial=date.today(),
         label="Дата рождения",
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     # course = forms.ModelChoiceField(label="Курс", queryset=Course.objects.all())
 
@@ -92,7 +93,8 @@ class PaymentForm(forms.Form):
     paid_date = forms.DateField(
         label="Дата оплаты",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     document = forms.FileField(
         label="Документ",
@@ -118,7 +120,8 @@ class PaymentForm(forms.Form):
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]
         if paid_date > date.today():
-            raise forms.ValidationError("Дата оплаты не может быть больше текущей даты")
+            raise forms.ValidationError(
+                "Дата оплаты не может быть больше текущей даты")
         return paid_date
 
 
@@ -141,7 +144,8 @@ class PaymentChangeForm(forms.Form):
     paid_date = forms.DateField(
         label="Дата оплаты",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
     )
     document = forms.FileField(
         label="Документ",
@@ -157,7 +161,8 @@ class PaymentChangeForm(forms.Form):
     def clean_paid_date(self):
         paid_date = self.cleaned_data["paid_date"]
         if paid_date > date.today():
-            raise forms.ValidationError("Дата оплаты не может быть больше текущей даты")
+            raise forms.ValidationError(
+                "Дата оплаты не может быть больше текущей даты")
         return paid_date
 
 
@@ -180,12 +185,13 @@ class AddReviewForm(forms.Form):
         (1, "1"),
     )
     text = forms.CharField(
+        # required=False,
         label="Комментарий",
-        max_length=1000,
+        max_length=500,
         widget=forms.Textarea(
             attrs={
                 "class": "form-control",
-                "placeholder": "Напишите пару слов о нашем курсе...",
+                "placeholder": "Напишите пару слов о нашем курсе..."
             },
         ),
     )
@@ -227,7 +233,8 @@ class AddMarkForm(forms.Form):
     date_of_mark = forms.DateField(
         label="Дата",
         initial=date.today(),
-        widget=forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+        widget=forms.DateInput(
+            attrs={"class": "form-control", "type": "date"}),
         help_text="Дата, за которую выставляется оценка",
     )
 

@@ -153,7 +153,7 @@ aside ul li {
 }
 
 .title {
-  font-size: 23px;
+  font-size: 24px;
   font-weight: bold;
   font-family: 'Open Sans', sans-serif;
   color: rgb(89, 11, 134);
@@ -236,6 +236,11 @@ aside a:hover {
 
 .icons-sm {
   padding-right: 10px;
+}
+
+.right-icons {
+  padding-left: 15px;
+  font-size: 25px;
 }
 
 .icons-text {
@@ -431,6 +436,11 @@ nav ul {
 
 .text {
   text-align: justify;
+  font-size: 17px;
+}
+
+.text-20 {
+  font-size: 20px;
 }
 
 /* https://itproger.com/course/django/5 

@@ -142,7 +142,7 @@ class StudentAdmin(admin.ModelAdmin):
     readonly_fields = [
         "related_user",
         "request_date",
-        "reg_date",
+        # "reg_date",
         "updated",
         "deleted",
         "is_paid",

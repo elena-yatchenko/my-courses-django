@@ -74,7 +74,8 @@ def students(request, status):
     return render(
         request,
         "students_app/students_list.html",
-        context={"status": status, "page_obj": page_obj, "student_list": student_list},
+        context={"status": status, "page_obj": page_obj,
+                 "student_list": student_list},
     )
 
 
@@ -258,6 +259,7 @@ def student_request(request, course_id):
                 initial={
                     "name": current_user.first_name,
                     "surname": current_user.last_name,
+                    "email": current_user.email,
                 }
             )
             message = "Заявка на обучение"
@@ -457,13 +459,19 @@ def student_archive(request, stud_id):
             if confirm_choice == "False":
                 return redirect(back_url)
             else:
+                """необходимо прописать условие, что это работает, если только студент не обучается на других курсах"""
                 user = student.related_user
-                group_for_add, created = Group.objects.get_or_create(name="Archive")
-                group_for_delete = Group.objects.get(name="Students")
-                user.groups.add(group_for_add)
-                user.groups.remove(group_for_delete)
+                students = Student.objects.filter(
+                    related_user=user, is_deleted=False)
+                if len(students) == 1:
+                    group_for_add, created = Group.objects.get_or_create(
+                        name="Archive")
+                    group_for_delete = Group.objects.get(name="Students")
+                    user.groups.add(group_for_add)
+                    user.groups.remove(group_for_delete)
                 student.status = "f"
                 student.save()
+
                 return redirect("student-detail", stud_id)
 
         else:

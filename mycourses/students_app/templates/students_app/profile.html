@@ -6,7 +6,7 @@
     Личный кабинет пользователя: {{ user.first_name|upper }} {{ user.last_name|upper }}
 </h4>
 {% for student, payments in stud_pay.items %}
-
+<hr>
 <h2>Курс: {{student.course }}</h2>
 
 {% if student.photo %}
@@ -17,6 +17,7 @@
 {% else %}
 <a class="btn btn-mine bottom-ref-left" href="{% url 'add-photo' student.pk %}">Добавить фото</a>
 {% endif %}
+<p><i class="far fa-face-smile icons-sm"></i><strong> Студент:</strong> {{student.full_name}}</p>
 <p><i class="fas fa-phone-volume icons-sm"></i><strong> Телефон:</strong> {{student.phone}}</p>
 <p><i class="fas fa-envelope-open-text icons-sm"></i><strong> E-mail:</strong> {{student.related_user.email}}</p>
 <p><i class="fas fa-cake-candles icons-sm"></i><strong> Дата рождения:</strong> {{student.date_of_birth|date:"d.m.Y"}}
@@ -34,6 +35,9 @@
         {{student.reg_date|date:"d.m.Y"}} г.</p>
     <p><i class="fas fa-medal icons-sm"></i><strong> Средний балл:</strong> {{student.average_mark}}</p>
 </div>
+{% if student.status == 'f' %}
+<p class="text-danger"><strong>Обучение завершено</strong></p>
+{% endif %}
 <div class="mine-block">
     <p class="pay-status">Статус оплаты:
         {% if student.is_paid %}
@@ -47,6 +51,7 @@
 </div>
 <hr>
 <div class="bottom-ref-left-top">
+
     <p class="pay-status">Общая стоимость обучения:
         <span class="text-success"><strong>{{ student.course.total_cost}} азн</strong></span>
     </p>
@@ -60,8 +65,6 @@
         {% for payment in payments %}
 
         <li class="m-top-15"><strong>Оплата: {{ payment.amount }} азн</strong>
-            <a class="btn btn-mine bottom-ref-left" href="{% url 'payment-update' student.id payment.id %}">
-                Редактировать данные</a>
             <ul>
                 <li style='list-style:none'><strong>Дата:</strong> {{ payment.paid_date|date:"d.m.Y" }} г.</li>
                 {% if payment.document %}
