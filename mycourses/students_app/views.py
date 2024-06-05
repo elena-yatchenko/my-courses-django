@@ -239,7 +239,6 @@ def student_request(request, course_id):
                     name=name,
                     surname=surname,
                     phone=cd["phone"],
-                    email=email,
                     date_of_birth=cd["date_of_birth"],
                     course=course,
                     status="r",
@@ -250,7 +249,7 @@ def student_request(request, course_id):
                 current_user.first_name = name
                 current_user.email = email
                 current_user.save()
-                return redirect("profile", student.id)
+                return redirect("profile")
             else:
                 # !!!! добавить ЛОГИРОВАНИЕ
                 message = "Некорректные данные"
@@ -459,7 +458,9 @@ def student_archive(request, stud_id):
             if confirm_choice == "False":
                 return redirect(back_url)
             else:
-                """необходимо прописать условие, что это работает, если только студент не обучается на других курсах"""
+                """перемещение пользователя из группы доступа Students в группу Archived происходит только
+                 в том случае, если только студент не обучается на других курсах. Иначе просто меняем статус
+                 с approved на finished"""
                 user = student.related_user
                 students = Student.objects.filter(
                     related_user=user, is_deleted=False)

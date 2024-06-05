@@ -39,8 +39,10 @@ class Course(models.Model):
     """Model representing a course"""
 
     name = models.CharField(max_length=200)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
-    summary = models.TextField(max_length=1000, help_text="Краткое описание курса")
+    category = models.ForeignKey(
+        Category, on_delete=models.SET_NULL, null=True)
+    summary = models.TextField(
+        max_length=1000, help_text="Краткое описание курса")
     lasting = models.IntegerField(
         default=1, help_text="Продолжительность курса, в месяцах"
     )
@@ -49,7 +51,8 @@ class Course(models.Model):
         max_digits=8, decimal_places=2, help_text="Стоимость в месяц, азн"
     )
     added = models.DateField(auto_now_add=True)
-    rating = models.DecimalField(max_digits=3, decimal_places=2, blank=True, null=True)
+    rating = models.DecimalField(
+        max_digits=3, decimal_places=2, blank=True, null=True)
     is_deleted = models.BooleanField(default=False)
     deleted = models.DateField(auto_now=True)
     views_num = models.IntegerField(default=0)
@@ -142,7 +145,7 @@ class Student(models.Model):
         return reverse("student-detail", args=[str(self.id)])
 
     def __str__(self):
-        return f"{self.full_name}"
+        return f"{self.full_name}, {self.course}"
 
 
 class Performance(models.Model):
@@ -169,8 +172,10 @@ class Payment(models.Model):
     """Модель отражает оплаты студента"""
 
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-    amount = models.DecimalField(verbose_name="Сумма", max_digits=8, decimal_places=2)
-    paid_date = models.DateField(verbose_name="Дата оплаты", default=date.today)
+    amount = models.DecimalField(
+        verbose_name="Сумма", max_digits=8, decimal_places=2)
+    paid_date = models.DateField(
+        verbose_name="Дата оплаты", default=date.today)
     document = models.FileField(upload_to="files/", null=True, blank=True)
     added = models.DateField(auto_now_add=True)
     updated = models.DateField(auto_now=True)
