@@ -5,7 +5,8 @@
 username - finalcourses
 email - на mail.ru
 password - Леголас (к базе данных тоже)
-admin full_admin, admin123456123
+admin full_admin, admin123456
+users 111user111 и т.п.
 
 Данное приложение представляет собой **сайт для компании, которая проводит курсы обучения
 по программе 1С**.
