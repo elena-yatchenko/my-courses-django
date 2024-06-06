@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<h2>Добавьте ваше фото</h2>
+<h2 style="text-align: left">Добавьте ваше фото</h2>
 <div class="shadowbox">
     <form action="" method="post" enctype="multipart/form-data">
         {{ form.as_p }}
@@ -17,7 +17,7 @@
 
 {% if image %}
 <hr>
-<p class="info-text"><i class="fas fa-wand-magic-sparkles"></i> Изображение загружено успешно!</p>
+<p><i class="fas fa-wand-magic-sparkles icons-sm"></i> <span class="info-text">Изображение загружено успешно!</span></p>
 <img src="{{ image.url}}" alt="connect" style="max-height:300px">
 <hr>
 <a class="btn btn-mine bottom-ref-left" href="{% url 'profile' %}">Вернуться в личный кабинет</a>
