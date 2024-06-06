@@ -545,7 +545,7 @@ def add_photo(request, stud_id):
             return render(
                 request,
                 "students_app/photo.html",
-                context={"image": student.photo},
+                context={"image": student.photo, "form": image_form},
             )
     else:
         image_form = AddImageForm()
