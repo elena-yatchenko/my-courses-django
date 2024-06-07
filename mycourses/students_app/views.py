@@ -151,7 +151,8 @@ def profile(request):
         payments = Payment.objects.filter(student=student)
         stud_pay[student] = payments
 
-    visit_date = request.session.get("visit_date", date.today().strftime("%Y-%m-%d"))
+    visit_date = request.session.get(
+        "visit_date", date.today().strftime("%Y-%m-%d"))
     print(f"request - {request.session}")
     print(f"visit date = {visit_date}")
     print(type(visit_date))
@@ -284,9 +285,11 @@ def student_update(request, stud_id):
             surname = cd["surname"]
             email = cd["email"]
             phone = cd["phone"]
+            date_of_birth = cd["date_of_birth"]
             student.name = name
             student.surname = surname
             student.phone = phone
+            student.date_of_birth = date_of_birth
             student.save()
             current_user.last_name = surname
             current_user.first_name = name
