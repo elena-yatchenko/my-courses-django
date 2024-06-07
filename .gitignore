@@ -6,6 +6,3 @@ mycourses/db.sqlite3
 db.sqlite3-journal
 media
 /media/
-
-settings_pythonanywhere.py
-settings_local.py
