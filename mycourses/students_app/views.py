@@ -151,23 +151,26 @@ def profile(request):
         payments = Payment.objects.filter(student=student)
         stud_pay[student] = payments
 
-    visit_date = request.session.get("visit_date", None)
+    visit_date = request.session.get("visit_date", date.today().strftime("%Y-%m-%d"))
     print(f"request - {request.session}")
     print(f"visit date = {visit_date}")
     print(type(visit_date))
-    if visit_date is None:
-        visit_date_current = date.today()
-    else:
-        visit_date_current = datetime.strptime(visit_date, "%Y-%m-%d")
+    # if visit_date is None:
+    #     visit_date_current = date.today()
+    # else:
+    #     visit_date_current = datetime.strptime(visit_date, "%Y-%m-%d")
+    # print(type(visit_date_current))
+    # print(visit_date_current)
+    visit_date_current = datetime.strptime(visit_date, "%Y-%m-%d")
     print(type(visit_date_current))
     print(visit_date_current)
     """переводим дату во формат строки для добавления в сессии 
     (иначе будет ошибка Object of type date is not JSON serializable),
     а для вывода на страницу, переводим обратно в строку"""
-    visit_date_new = date.today().strftime("%Y-%m-%d")
-    request.session["visit_date"] = visit_date_new
-    print(f"перевод в строку - {visit_date_new}")
-    print(type(visit_date_new))
+    # visit_date_new = date.today().strftime("%Y-%m-%d")
+    request.session["visit_date"] = date.today().strftime("%Y-%m-%d")
+    # print(f"перевод в строку - {visit_date_new}")
+    # print(type(visit_date_new))
     print(f'новая дата посещения в сессии - {request.session["visit_date"]}')
 
     return render(

@@ -115,6 +115,10 @@ class PaymentForm(forms.Form):
             raise forms.ValidationError(
                 f"Сумма оплаты превышает задолженность - {rest_of_payment}"
             )
+        if amount <= 0:
+            raise forms.ValidationError(
+                f"Сумма не может быть отрицательной или равной 0. Введите корректное значение"
+            )
         return amount
 
     def clean_paid_date(self):
@@ -164,6 +168,14 @@ class PaymentChangeForm(forms.Form):
             raise forms.ValidationError(
                 "Дата оплаты не может быть больше текущей даты")
         return paid_date
+
+    def clean_amount(self):
+        amount = self.cleaned_data["amount"]
+        if amount <= 0:
+            raise forms.ValidationError(
+                f"Сумма не может быть отрицательной или равной 0. Введите корректное значение"
+            )
+        return amount
 
 
 class ConfirmationForm(forms.Form):

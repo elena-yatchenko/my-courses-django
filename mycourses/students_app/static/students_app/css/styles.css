@@ -422,7 +422,7 @@ nav ul {
 }
 
 .img-profile {
-  width: 40%;
+  max-height: 250px;
   float: right;
 }
 
