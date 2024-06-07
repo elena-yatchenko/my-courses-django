@@ -91,7 +91,7 @@ def course_detail(request, id):
         "students": students,
         "reviews": reviews,
     }
-    if user.is_authenticated and not user.is_staff:
+    if user.has_perm('students_app.add_review') or user.has_perm('students_app.change_review'):
         if request.method == "POST":
             review_form = AddReviewForm(request.POST)
             if review_form.is_valid():

@@ -46,7 +46,7 @@ h2 {
 }
 
 body p {
-  max-width: 800px;
+  /* max-width: 800px; */
   margin: 10px auto 10px 20px;
 }
 
@@ -64,14 +64,6 @@ header a {
   transition: .3s ease-in-out;
 }
 
-/*бокс для комментов*/
-/* margin-top: 10px;
-    background: #e9e9e9;
-    padding: 10px 3%;
-    border-radius: 0 9px 9px 9px;
-    border: 1px solid #949494;
-    width: 100%;
-    box-sizing: border-box; */
 
 .logo {
   color: #D5B45B;
@@ -127,7 +119,7 @@ aside ul li {
 
 .block-text {
   position: relative;
-  padding: 20px;
+  padding: 10px 20px;
 }
 
 .review-div {
@@ -434,9 +426,10 @@ nav ul {
   float: right;
 }
 
-.text {
+.text-width {
   text-align: justify;
   font-size: 17px;
+  padding: 10px 20px;
 }
 
 .text-20 {
