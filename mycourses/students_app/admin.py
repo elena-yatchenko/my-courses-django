@@ -142,7 +142,7 @@ class StudentAdmin(admin.ModelAdmin):
     readonly_fields = [
         "related_user",
         "request_date",
-        # "reg_date",
+        "reg_date",
         "updated",
         "deleted",
         "is_paid",
@@ -226,21 +226,22 @@ class ReviewAdmin(admin.ModelAdmin):
     readonly_fields = ["added", "rate", "text"]
     fieldsets = [
         (
-            None,
+            "Общая информация",
             {
-                "fields": ["rate", "course"],
+                # "classes": ["collapse"],
+                "fields": ["rate", "course", "student"],
             },
         ),
         (
             "Комментарий",
             {
-                "classes": ["collapse"],
                 "fields": ["text"],
             },
         ),
         (
             "Прочее",
             {
+                # "classes": ["collapse"],
                 "fields": ["added"],
             },
         ),

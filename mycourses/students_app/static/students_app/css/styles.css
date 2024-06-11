@@ -426,6 +426,11 @@ nav ul {
   float: right;
 }
 
+.img-student {
+  max-height: 200px;
+  float: right;
+}
+
 .text-width {
   text-align: justify;
   font-size: 17px;
