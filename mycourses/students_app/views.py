@@ -412,7 +412,6 @@ def payment_update(request, stud_id, pay_id):
             payment_change_form = PaymentChangeForm(
                 initial={
                     "student": student,
-                    "amount": payment.amount,
                     "paid_date": payment.paid_date,
                 }
             )
