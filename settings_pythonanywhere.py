@@ -38,10 +38,10 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 
 """для локального запуска"""
-DEBUG = True
+# DEBUG = True
 
 """для pythonanywhere"""
-# DEBUG = False
+DEBUG = False
 
 """для pythonanywhere"""
 SESSION_COOKIE_SECURE = True
