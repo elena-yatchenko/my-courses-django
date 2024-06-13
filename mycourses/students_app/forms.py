@@ -134,7 +134,7 @@ class PaymentChangeForm(forms.Form):
 
     student = forms.ModelChoiceField(
         label="Студент",
-        disabled=True,
+        # disabled=True,
         queryset=Student.objects.all(),
         widget=forms.Select(attrs={"class": "form-control"}),
         required=False,

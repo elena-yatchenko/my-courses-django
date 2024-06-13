@@ -409,12 +409,6 @@ def payment_update(request, stud_id, pay_id):
         else:
             # !!!! добавить ЛОГИРОВАНИЕ
             message = "Некорректные данные"
-            payment_change_form = PaymentChangeForm(
-                initial={
-                    "student": student,
-                    "paid_date": payment.paid_date,
-                }
-            )
     else:
         payment_change_form = PaymentChangeForm(
             initial={
