@@ -91,37 +91,28 @@ def course_detail(request, id):
         "students": students,
         "reviews": reviews,
     }
-    user = request.user
-    student = Student.objects.filter(
-        related_user=user, course=course, status__in=['a', 'f']).first()
-    if student:
-        context.update({'student': student})
-        if user.has_perm('students_app.add_review') or user.has_perm('students_app.change_review'):
-            if request.method == "POST":
-                review_form = AddReviewForm(request.POST)
-                if review_form.is_valid():
+    if user.id: #иначе выдает ошибку в случае, если неавторизованные юзер, а значит нет id
+        student = Student.objects.filter(
+            related_user=user, course=course, status__in=['a', 'f']).first()
+        if student:
+            context.update({'student': student})
+            if user.has_perm('students_app.add_review') or user.has_perm('students_app.change_review'):
+                if request.method == "POST":
+                    review_form = AddReviewForm(request.POST)
+                    if review_form.is_valid():
+                        cd = review_form.cleaned_data
+                        new_review = Review(
+                            student=student, course=course, text=cd["text"], rate=cd["rate"]
+                        )
+                        new_review.save()
+                        course.rating = course.rating_count()
+                        course.save()
+                        return redirect("course-detail", course.id)
 
-                    # student = Student.objects.filter(
-                    #     related_user=user, course=course).first()
-                    cd = review_form.cleaned_data
-                    new_review = Review(
-                        student=student, course=course, text=cd["text"], rate=cd["rate"]
-                    )
-                    new_review.save()
-                    course.rating = course.rating_count()
-                    course.save()
-                    return redirect("course-detail", course.id)
-                # else:
-                #     !!!Добавить логирование
-            else:
-                review_form = AddReviewForm()
-            context.update({"form": review_form})
-            # context = {
-            #     "course": course,
-            #     "students": students,
-            #     "reviews": reviews,
-            #     "form": review_form,
-            # }
+                else:
+                    review_form = AddReviewForm()
+                context.update({"form": review_form})
+
     return render(
         request,
         "students_app/course_detail.html",
