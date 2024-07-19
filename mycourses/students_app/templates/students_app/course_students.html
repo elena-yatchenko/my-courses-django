@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Студенты курса "{{course}}"</h2>
+
+<ol>
+    {% for student in page_obj %}
+    <li class="m-top-20"><a class="mine-ref student" href="{{ student.get_absolute_url }}">
+            {{ student.full_name|upper }}</a>
+        <span class="mark-line"><em>Средний балл: <strong>{{student.average_mark}}</strong></em></span>
+    </li>
+    {% endfor %}
+</ol>
+
+{% endblock %}
+
+
+{% block pagination %}
+<div class="pagination">
+    <span class="page-links">
+        {% if page_obj.has_previous %}
+        <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}">Предыдущая</a>
+        {% endif %}
+        <span class="page-current">
+            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}.
+        </span>
+        {% if page_obj.has_next %}
+        <a href="{{ request.path }}?page={{ page_obj.next_page_number }}">Следующая</a>
+        {% endif %}
+    </span>
+</div>
+{% endblock %}

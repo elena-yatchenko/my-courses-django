@@ -91,12 +91,14 @@ def course_detail(request, id):
         "students": students,
         "reviews": reviews,
     }
-    if user.id: #иначе выдает ошибку в случае, если неавторизованные юзер, а значит нет id
+    if user.id:  # иначе выдает ошибку в случае, если неавторизованные юзер, а значит нет id
         student = Student.objects.filter(
             related_user=user, course=course, status__in=['a', 'f']).first()
         if student:
-            context.update({'student': student})
+            # context.update({'student': student})
+            # check_review = student.review_set.first()
             if user.has_perm('students_app.add_review') or user.has_perm('students_app.change_review'):
+                context.update({'student': student})
                 if request.method == "POST":
                     review_form = AddReviewForm(request.POST)
                     if review_form.is_valid():
@@ -108,11 +110,69 @@ def course_detail(request, id):
                         course.rating = course.rating_count()
                         course.save()
                         return redirect("course-detail", course.id)
-
                 else:
-                    review_form = AddReviewForm()
-                context.update({"form": review_form})
+                    check_review = student.review_set.first()
+                    if check_review:
+                        return redirect("review-update", check_review.id)
 
+                    else:
+                        review_form = AddReviewForm()
+                context.update({"form": review_form})
+    return render(
+        request,
+        "students_app/course_detail.html",
+        context,
+    )
+
+
+def course_students(request, course_id):
+    course = Course.objects.filter(pk=course_id).first()
+    student_list = Student.objects.filter(
+        course=course, is_deleted=False, status='a')
+    # courses = set([student.course for student in student_list])
+    paginator = Paginator(list(student_list), 2)  # Show 2 contacts per page.
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+
+    return render(
+        request,
+        "students_app/course_students.html",
+        context={"page_obj": page_obj,
+                 "course": course, }
+    )
+
+def review_update(request, review_id):
+    review = Review.objects.filter(pk=review_id).first()
+    course = review.course
+    students = course.student_set.filter(status="a", is_deleted=False)
+    reviews = course.review_set.all()
+    if request.method == "POST":
+        form = AddReviewForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            text = cd["text"]
+            rate = cd["rate"]
+            review.text = text
+            review.rate = rate
+            review.save()
+            course.rating = course.rating_count()
+            course.save()
+            return redirect("course-detail", review.course.id)
+    else:
+        form = AddReviewForm(
+            initial={
+                "text": review.text,
+                "rate": review.rate,
+            }
+        )
+
+    context = {
+        "course": course,
+        "students": students,
+        "reviews": reviews,
+        "student": review.student,
+        "form": form,
+    }
     return render(
         request,
         "students_app/course_detail.html",

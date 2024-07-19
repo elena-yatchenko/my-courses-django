@@ -212,11 +212,9 @@ class AddReviewForm(forms.Form):
         choices=RATES,
         required=True,
     )
-    # rate = forms.ChoiceField(
-    #     widget=forms.RadioSelect(attrs={"class": "btn-check", "type": "radio"}),
-    #     choices=RATES,
-    #     required=True,
-    # )
+
+    class AddReviewForm(forms.Form):
+        pass
 
 
 class AddMarkForm(forms.Form):

@@ -72,19 +72,11 @@
 
         {% if user.is_staff %}
         <hr>
-
         <div class="m-top-20">
-            <p><i class="fas fa-users icons"></i><span class="title">
-                    Студенты{% if students %} ({{ students.count }}){% endif %}</span></p>
             {% if students %}
-            <ol>
-                {% for student in students %}
-                <li class="m-top-20"><a class="mine-ref student" href="{{ student.get_absolute_url }}">
-                        {{ student.full_name|upper }}</a>
-                    <span class="mark-line"><em>Средний балл: <strong>{{student.average_mark}}</strong></em></span>
-                </li>
-                {% endfor %}
-            </ol>
+            <p><i class="fas fa-users icons"></i><a class="title" href="{% url 'course-students' course.id %}">Студенты
+                    {{ students.count }}</a>
+            </p>
             {% else %}
             <p class="info-text"> <i class="fas fa-circle-exclamation icons"></i>На данном курсе нет активных студентов
             </p>
